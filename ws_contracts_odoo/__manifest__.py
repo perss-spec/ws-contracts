@@ -17,7 +17,7 @@
     "depends": ["hr"],
     "data": [
         "security/ir.model.access.csv",
-        "wizards/generate_wizard_views.xml",
+        "views/generate_wizard_views.xml",
         "views/hr_employee_views.xml",
     ],
     "external_dependencies": {
