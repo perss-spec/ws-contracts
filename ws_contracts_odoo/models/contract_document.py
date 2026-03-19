@@ -306,6 +306,27 @@ class ContractDocument(models.Model):
             _logger.exception("Failed to create sign request for document %s", self.id)
             raise UserError(f"Failed to send for signature: {e}") from e
 
+    def _get_or_create_sign_role(self, name):
+        """Find sign.item.role by name, create if missing."""
+        Role = self.env["sign.item.role"]
+        role = Role.search([("name", "=", name)], limit=1)
+        if not role:
+            role = Role.create({"name": name})
+            _logger.info("Created sign role '%s' (id=%s)", name, role.id)
+        return role
+
+    def _get_sign_type_signature(self):
+        """Find the 'signature' sign.item.type, create if missing."""
+        ItemType = self.env["sign.item.type"]
+        sig_type = ItemType.search([("item_type", "=", "signature")], limit=1)
+        if not sig_type:
+            sig_type = ItemType.create({
+                "name": "Signature",
+                "item_type": "signature",
+            })
+            _logger.info("Created sign item type 'Signature' (id=%s)", sig_type.id)
+        return sig_type
+
     def _create_sign_template(self):
         """Create sign.template from the PDF attachment."""
         self.ensure_one()
@@ -321,17 +342,11 @@ class ContractDocument(models.Model):
             "attachment_id": sign_attachment.id,
         })
 
-        sig_type = self.env.ref("sign.sign_item_type_signature", raise_if_not_found=False)
-        role_company = self.env.ref("sign.sign_item_role_user", raise_if_not_found=False)
-        role_customer = self.env.ref("sign.sign_item_role_customer", raise_if_not_found=False)
+        sig_type = self._get_sign_type_signature()
+        role_company = self._get_or_create_sign_role("Company")
+        role_employee = self._get_or_create_sign_role("Employee")
 
-        if not sig_type or not role_company or not role_customer:
-            raise UserError(
-                "Odoo Sign data records not found. "
-                "Please ensure the Sign module is properly installed."
-            )
-
-        for role, pos_x in [(role_company, 0.05), (role_customer, 0.55)]:
+        for role, pos_x in [(role_company, 0.05), (role_employee, 0.55)]:
             SignItem.create({
                 "template_id": sign_template.id,
                 "type_id": sig_type.id,
@@ -352,8 +367,8 @@ class ContractDocument(models.Model):
         template = self.template_id
         emp = self.employee_id
 
-        role_company = self.env.ref("sign.sign_item_role_user")
-        role_customer = self.env.ref("sign.sign_item_role_customer")
+        role_company = self._get_or_create_sign_role("Company")
+        role_employee = self._get_or_create_sign_role("Employee")
 
         # Company signatory
         signatory_partner = False
@@ -381,7 +396,7 @@ class ContractDocument(models.Model):
             "template_id": sign_template.id,
             "request_item_ids": [
                 (0, 0, {"role_id": role_company.id, "partner_id": signatory_partner.id}),
-                (0, 0, {"role_id": role_customer.id, "partner_id": emp_partner.id}),
+                (0, 0, {"role_id": role_employee.id, "partner_id": emp_partner.id}),
             ],
             "subject": f"{template.doc_title or 'Document'} — {emp.name}",
             "message": f"Please review and sign the {template.doc_title or 'document'}.",
