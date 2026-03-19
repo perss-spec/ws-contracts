@@ -60,6 +60,8 @@
                        decoration-muted="state == 'archived'"/>
                 <field name="generated_date"/>
                 <field name="signed_date"/>
+                <field name="signing_date" optional="hide"/>
+                <field name="contract_start_date" optional="hide"/>
                 <field name="company_id"/>
             </list>
         </field>
@@ -102,6 +104,42 @@
                             <field name="signed_date"/>
                             <field name="pdf_attachment_id"/>
                             <field name="sign_request_id" invisible="sign_request_id == 0"/>
+                        </group>
+                    </group>
+                    <group string="Contract Details"
+                           invisible="not template_id or doc_type not in ('probna_1m','probna_2m','probna_3m','probna_2plus1','zlecenie','czas_okreslony','czas_nieokreslony')">
+                        <group string="Dates">
+                            <field name="signing_date"/>
+                            <field name="contract_start_date"/>
+                            <field name="contract_end_date"
+                                   invisible="doc_type == 'czas_nieokreslony'"/>
+                        </group>
+                        <group string="Position">
+                            <field name="job_title_pl"/>
+                            <field name="job_title_en"/>
+                            <field name="place_of_work"/>
+                        </group>
+                    </group>
+                    <group invisible="not template_id or doc_type not in ('probna_1m','probna_2m','probna_3m','probna_2plus1','zlecenie','czas_okreslony','czas_nieokreslony')">
+                        <group string="Employment Terms"
+                               invisible="doc_type == 'zlecenie'">
+                            <field name="working_time_pl"/>
+                            <field name="working_time_en"/>
+                            <field name="salary_gross"/>
+                        </group>
+                        <group string="Mandate Terms"
+                               invisible="doc_type != 'zlecenie'">
+                            <field name="hourly_rate_gross"/>
+                            <field name="scope_of_work_pl"/>
+                            <field name="scope_of_work_en"/>
+                            <field name="id_document_pl"/>
+                            <field name="id_document_en"/>
+                        </group>
+                    </group>
+                    <group invisible="doc_type != 'probna_2plus1'">
+                        <group string="Extension Justification">
+                            <field name="justification_pl"/>
+                            <field name="justification_en"/>
                         </group>
                     </group>
                 </sheet>

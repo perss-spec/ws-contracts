@@ -14,6 +14,7 @@ class HrEmployee(models.Model):
     ws_passport_issued = fields.Date("Passport Issued")
     ws_passport_expires = fields.Date("Passport Expires")
     ws_address_full = fields.Text("Full Address")
+    ws_pesel = fields.Char("PESEL", size=11, help="Polish national identification number (11 digits)")
     ws_iban = fields.Char("IBAN")
     ws_swift = fields.Char("SWIFT/BIC", default="UNJSUAUKXXX")
     ws_receiver_name = fields.Char("Bank Receiver Name")
@@ -108,4 +109,28 @@ class HrEmployee(models.Model):
             "service_description": self.ws_service_description or "UAV Systems Development Services",
             "agreement_date": self.ws_agreement_date,
             "effective_date": self.ws_effective_date,
+        }
+
+    def _get_gender_forms_pl(self):
+        """Return Polish gender-dependent word forms."""
+        self.ensure_one()
+        is_female = self.gender == "female"
+        return {
+            "PAN_PANI": "Pani" if is_female else "Pan",
+            "MR_MS": "Ms." if is_female else "Mr.",
+            "ZAMIESZKALY_A": "zamieszkała" if is_female else "zamieszkały",
+            "ZWANYM_A": "zwaną" if is_female else "zwanym",
+            "OTRZYMALEM_AM": "otrzymałam" if is_female else "otrzymałem",
+            "LEGITYMUJACY_A": "legitymująca" if is_female else "legitymujący",
+        }
+
+    def _get_pl_contract_data(self):
+        """Return dict with employee data for Polish contract DOCX generation."""
+        self.ensure_one()
+        gender_forms = self._get_gender_forms_pl()
+        return {
+            **gender_forms,
+            "IMIE_I_NAZWISKO": self.name or "",
+            "PESEL": self.ws_pesel or "",
+            "ADRES_ZAMIESZKANIA": self.ws_address_full or "",
         }

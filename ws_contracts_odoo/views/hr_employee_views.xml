@@ -40,6 +40,7 @@
                     <group string="Personal">
                         <group>
                             <field name="ws_full_name_lat"/>
+                            <field name="ws_pesel"/>
                             <field name="ws_address_full"/>
                         </group>
                     </group>

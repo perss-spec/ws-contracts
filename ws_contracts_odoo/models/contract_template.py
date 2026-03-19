@@ -4,6 +4,9 @@ from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
+PL_CONTRACT_TYPES = {"probna_1m", "probna_2m", "probna_3m", "probna_2plus1",
+                     "zlecenie", "czas_okreslony", "czas_nieokreslony"}
+
 
 class ContractTemplate(models.Model):
     _name = "ws.contract.template"
@@ -28,12 +31,27 @@ class ContractTemplate(models.Model):
             ("nca", "Non-Compete Agreement"),
             ("employment", "Employment Contract"),
             ("b2b", "B2B Contract"),
+            ("probna_1m", "Probationary ≤ 1 month"),
+            ("probna_2m", "Probationary ≤ 2 months"),
+            ("probna_3m", "Probationary ≤ 3 months"),
+            ("probna_2plus1", "Probationary Extended (2+1)"),
+            ("zlecenie", "Civil Law Contract (Mandate)"),
+            ("czas_okreslony", "Fixed-Term Employment"),
+            ("czas_nieokreslony", "Indefinite Employment"),
         ],
         string="Document Type",
         required=True,
         default="nda",
     )
+    generation_method = fields.Selection(
+        [("pdf", "PDF (Sections)"), ("docx", "DOCX Template")],
+        string="Generation Method", default="pdf", required=True,
+    )
     active = fields.Boolean(default=True)
+
+    # DOCX template
+    docx_template = fields.Binary("DOCX Template File", attachment=True)
+    docx_template_filename = fields.Char("DOCX Filename")
 
     # Theme / branding
     primary_color = fields.Char("Primary Color", default="#8B0000")
@@ -93,6 +111,13 @@ class ContractTemplate(models.Model):
             "nca": "Non-Compete Agreement",
             "employment": "Employment Contract",
             "b2b": "B2B Contract",
+            "probna_1m": "Probationary Contract (1m)",
+            "probna_2m": "Probationary Contract (2m)",
+            "probna_3m": "Probationary Contract (3m)",
+            "probna_2plus1": "Probationary Contract (2+1)",
+            "zlecenie": "Civil Law Contract",
+            "czas_okreslony": "Fixed-Term Employment Contract",
+            "czas_nieokreslony": "Indefinite Employment Contract",
         }
         for rec in self:
             rec.doc_title = titles.get(rec.doc_type, "Document")

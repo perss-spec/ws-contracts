@@ -34,6 +34,8 @@ class GenerateWizard(models.TransientModel):
     nda_filename = fields.Char("NDA Filename", readonly=True)
     contract_file = fields.Binary("Contract PDF", readonly=True)
     contract_filename = fields.Char("Contract Filename", readonly=True)
+    docx_file = fields.Binary("DOCX File", readonly=True)
+    docx_filename = fields.Char("DOCX Filename", readonly=True)
     state = fields.Selection(
         [("choose", "Choose"), ("done", "Done")],
         default="choose",
@@ -73,6 +75,11 @@ class GenerateWizard(models.TransientModel):
         tmpl = self.template_id
         tmpl_data = tmpl.to_template_data()
 
+        # DOCX generation path
+        if tmpl.generation_method == "docx":
+            self._generate_from_docx_template(tmpl, vals)
+            return
+
         if tmpl_data.doc_type == "nda":
             missing = emp_data.validate_for_nda()
             if missing:
@@ -101,6 +108,47 @@ class GenerateWizard(models.TransientModel):
         self.env["ws.contract.document"].create({
             "employee_id": self.employee_id.id,
             "template_id": tmpl.id,
+            "state": "generated",
+            "pdf_attachment_id": attachment.id,
+            "generated_date": fields.Datetime.now(),
+        })
+
+    def _generate_from_docx_template(self, template, vals):
+        """Generate DOCX from template with placeholders."""
+        if not template.docx_template:
+            raise UserError("No DOCX template file uploaded on the template record.")
+
+        from ..lib.docx_generator import fill_docx_template
+
+        emp = self.employee_id
+        placeholders = emp._get_pl_contract_data()
+
+        # For wizard-based generation, we use minimal placeholders
+        # Full placeholder data should be set on the document record
+
+        docx_bytes = fill_docx_template(
+            base64.b64decode(template.docx_template),
+            placeholders,
+        )
+
+        filename = f"{template.doc_title or 'Document'}_{emp.name}.docx"
+        filename = filename.replace(" ", "_")
+
+        vals["docx_file"] = base64.b64encode(docx_bytes)
+        vals["docx_filename"] = filename
+
+        attachment = self.env["ir.attachment"].create({
+            "name": filename,
+            "type": "binary",
+            "datas": base64.b64encode(docx_bytes),
+            "res_model": "hr.employee",
+            "res_id": emp.id,
+            "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        })
+
+        self.env["ws.contract.document"].create({
+            "employee_id": emp.id,
+            "template_id": template.id,
             "state": "generated",
             "pdf_attachment_id": attachment.id,
             "generated_date": fields.Datetime.now(),

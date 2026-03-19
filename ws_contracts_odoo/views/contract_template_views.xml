@@ -11,6 +11,7 @@
                 <field name="company_id"/>
                 <field name="doc_type" widget="badge"/>
                 <field name="local_lang"/>
+                <field name="generation_method" widget="badge"/>
                 <field name="primary_color" widget="color"/>
                 <field name="active" column_invisible="True"/>
             </list>
@@ -31,7 +32,8 @@
                         <group string="General">
                             <field name="company_id"/>
                             <field name="doc_type"/>
-                            <field name="local_lang"/>
+                            <field name="generation_method"/>
+                            <field name="local_lang" invisible="generation_method == 'docx'"/>
                             <field name="active"/>
                         </group>
                         <group string="Document Settings">
@@ -42,7 +44,16 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Branding" name="branding">
+                        <page string="DOCX Template" name="docx_template"
+                              invisible="generation_method != 'docx'">
+                            <group>
+                                <group>
+                                    <field name="docx_template" filename="docx_template_filename"/>
+                                    <field name="docx_template_filename" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Branding" name="branding" invisible="generation_method == 'docx'">
                             <group>
                                 <group string="Colors">
                                     <field name="primary_color" widget="color"/>
@@ -74,7 +85,7 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Sections" name="sections">
+                        <page string="Sections" name="sections" invisible="generation_method == 'docx'">
                             <field name="section_ids">
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>

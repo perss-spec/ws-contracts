@@ -2,12 +2,14 @@
     "name": "WS Contracts — Multi-Company Bilingual Contract System",
     "version": "18.0.2.0.0",
     "category": "Human Resources",
-    "summary": "Generate bilingual NDA and Contract PDFs with multi-company support and Odoo Sign integration",
+    "summary": "Generate bilingual contracts (PDF + DOCX) with multi-company support and Odoo Sign integration",
     "description": """
         Multi-company bilingual contract management system:
         - Contract templates with company branding
         - Bilingual PDF generation (EN + local language)
         - NDA, Consulting Agreement, and custom document types
+        - Polish contract templates (Umowa zlecenie, Umowa o dzieło)
+        - DOCX generation with styled bilingual formatting
         - Odoo Sign integration for digital signatures
         - AES-256 encrypted PDFs with watermarks
         - Document lifecycle tracking (draft → signed → archived)
@@ -29,7 +31,7 @@
         "data/cron.xml",
     ],
     "external_dependencies": {
-        "python": ["fpdf2"],
+        "python": ["fpdf2", "docx"],
     },
     "installable": True,
     "application": False,

@@ -56,6 +56,24 @@ class ContractDocument(models.Model):
     generated_date = fields.Datetime("Generated Date", readonly=True, copy=False)
     signed_date = fields.Datetime("Signed Date", readonly=True, copy=False)
 
+    # ── Polish contract fields ──
+    signing_date = fields.Date("Signing Date")
+    contract_start_date = fields.Date("Contract Start Date")
+    contract_end_date = fields.Date("Contract End Date")
+    job_title_pl = fields.Char("Job Title (PL)")
+    job_title_en = fields.Char("Job Title (EN)")
+    place_of_work = fields.Char("Place of Work", default="Lublin")
+    working_time_pl = fields.Char("Working Time (PL)", default="pełny etat (1/1)")
+    working_time_en = fields.Char("Working Time (EN)", default="full time (1/1)")
+    salary_gross = fields.Float("Salary Gross (PLN/month)", digits=(10, 2))
+    hourly_rate_gross = fields.Float("Hourly Rate Gross (PLN)", digits=(10, 2))
+    scope_of_work_pl = fields.Text("Scope of Work (PL)")
+    scope_of_work_en = fields.Text("Scope of Work (EN)")
+    id_document_pl = fields.Char("ID Document (PL)", help="e.g. dowodem osobistym ABC 123456")
+    id_document_en = fields.Char("ID Document (EN)", help="e.g. ID card ABC 123456")
+    justification_pl = fields.Text("Extension Justification (PL)", help="For Probationary 2+1 only")
+    justification_en = fields.Text("Extension Justification (EN)", help="For Probationary 2+1 only")
+
     company_id = fields.Many2one(
         related="template_id.company_id", store=True, readonly=True,
     )
@@ -81,8 +99,12 @@ class ContractDocument(models.Model):
         """)
 
     def action_generate(self):
-        """Generate PDF from template + employee data."""
+        """Generate PDF or DOCX from template + employee data."""
         self.ensure_one()
+        # DOCX generation path
+        if self.template_id.generation_method == "docx":
+            return self._generate_docx()
+        # Existing PDF generation path below...
         emp = self.employee_id
         data = emp._get_contract_data()
 
@@ -120,6 +142,120 @@ class ContractDocument(models.Model):
         })
 
         return True
+
+    def _generate_docx(self):
+        """Generate filled DOCX from template."""
+        self.ensure_one()
+        if not self.template_id.docx_template:
+            raise UserError("No DOCX template file uploaded on the template record.")
+
+        from ..lib.docx_generator import fill_docx_template
+
+        # Collect placeholder values
+        placeholders = self._collect_pl_placeholders()
+
+        # Fill template
+        docx_bytes = fill_docx_template(
+            base64.b64decode(self.template_id.docx_template),
+            placeholders,
+        )
+
+        filename = f"{self.template_id.doc_title or 'Document'}_{self.employee_id.name}_{fields.Date.today()}.docx"
+        filename = filename.replace(" ", "_")
+
+        attachment = self.env["ir.attachment"].create({
+            "name": filename,
+            "type": "binary",
+            "datas": base64.b64encode(docx_bytes),
+            "res_model": self._name,
+            "res_id": self.id,
+            "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        })
+
+        self.write({
+            "state": "generated",
+            "pdf_attachment_id": attachment.id,
+            "generated_date": fields.Datetime.now(),
+        })
+        return True
+
+    def _collect_pl_placeholders(self):
+        """Collect all placeholder values for Polish DOCX template filling."""
+        self.ensure_one()
+        emp = self.employee_id
+        data = emp._get_pl_contract_data()
+
+        # Date formatting helpers
+        def fmt_pl(d):
+            """Format date as Polish: '17 marca 2026 r.'"""
+            if not d:
+                return ""
+            months_pl = {
+                1: "stycznia", 2: "lutego", 3: "marca", 4: "kwietnia",
+                5: "maja", 6: "czerwca", 7: "lipca", 8: "sierpnia",
+                9: "września", 10: "października", 11: "listopada", 12: "grudnia",
+            }
+            return f"{d.day} {months_pl[d.month]} {d.year} r."
+
+        def fmt_en(d):
+            """Format date as English: '17 March 2026'"""
+            if not d:
+                return ""
+            months_en = {
+                1: "January", 2: "February", 3: "March", 4: "April",
+                5: "May", 6: "June", 7: "July", 8: "August",
+                9: "September", 10: "October", 11: "November", 12: "December",
+            }
+            return f"{d.day} {months_en[d.month]} {d.year}"
+
+        def fmt_pln(amount):
+            """Format amount with Polish decimal separator (comma)."""
+            return f"{amount:,.2f}".replace(",", " ").replace(".", ",")
+
+        def fmt_pln_en(amount):
+            """Format amount with English decimal separator (period)."""
+            return f"{amount:,.2f}".replace(",", " ")
+
+        # Dates
+        data["DATA_ZAWARCIA"] = fmt_pl(self.signing_date)
+        data["DATA_ZAWARCIA_EN"] = fmt_en(self.signing_date)
+
+        # Employment contract dates
+        data["DATA_OD"] = fmt_pl(self.contract_start_date)
+        data["DATA_OD_EN"] = fmt_en(self.contract_start_date)
+        data["DATA_DO"] = fmt_pl(self.contract_end_date)
+        data["DATA_DO_EN"] = fmt_en(self.contract_end_date)
+
+        # Zlecenie dates (same data, different placeholder names)
+        data["DATA_ROZPOCZECIA"] = fmt_pl(self.contract_start_date)
+        data["DATA_ROZPOCZECIA_EN"] = fmt_en(self.contract_start_date)
+        data["DATA_ZAKONCZENIA"] = fmt_pl(self.contract_end_date)
+        data["DATA_ZAKONCZENIA_EN"] = fmt_en(self.contract_end_date)
+
+        # Job details
+        data["STANOWISKO_PL"] = self.job_title_pl or ""
+        data["STANOWISKO_EN"] = self.job_title_en or ""
+        data["MIEJSCE_PRACY"] = self.place_of_work or "Lublin"
+        data["WYMIAR_ETATU"] = self.working_time_pl or "pełny etat (1/1)"
+        data["WYMIAR_ETATU_EN"] = self.working_time_en or "full time (1/1)"
+
+        # Salary
+        data["KWOTA_BRUTTO"] = fmt_pln(self.salary_gross) if self.salary_gross else ""
+        data["KWOTA_BRUTTO_EN"] = fmt_pln_en(self.salary_gross) if self.salary_gross else ""
+        data["STAWKA_BRUTTO"] = fmt_pln(self.hourly_rate_gross) if self.hourly_rate_gross else ""
+        data["STAWKA_BRUTTO_EN"] = fmt_pln_en(self.hourly_rate_gross) if self.hourly_rate_gross else ""
+
+        # Zlecenie-specific
+        data["ZAKRES_CZYNNOSCI_PL"] = self.scope_of_work_pl or ""
+        data["ZAKRES_CZYNNOSCI_EN"] = self.scope_of_work_en or ""
+        data["DOKUMENT_TOZSAMOSCI"] = self.id_document_pl or ""
+        data["DOKUMENT_TOZSAMOSCI_EN"] = self.id_document_en or ""
+
+        # 2+1 extension justification
+        data["UZASADNIENIE_PL"] = self.justification_pl or ""
+        data["UZASADNIENIE_EN"] = self.justification_en or ""
+
+        return data
 
     def action_send_for_signature(self):
         """Send document for signature via Odoo Sign."""
