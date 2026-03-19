@@ -6,11 +6,9 @@ from datetime import date
 from io import BytesIO
 from pathlib import Path
 
-from fpdf import FPDF
-
 from ..models import CompanyInfo, EmployeeData
 from . import contract_sections as S
-from .base import BasePdfGenerator
+from .base import BasePdfGenerator, WsPDF
 from .styles import (
     CONTRACT_END_DATE,
     CONTRACT_PALETTE as C,
@@ -30,19 +28,19 @@ class ContractPdfGenerator(BasePdfGenerator):
 
     def generate(self, emp: EmployeeData) -> bytes:
         pdf = self._create_pdf(emp.id)
+        # Configure Contract theme (navy/cyan)
+        pdf._doc_type = "Consulting Agreement"
+        pdf._header_color = C["NAVY"]
+        pdf._accent_color = C["CYAN"]
+        pdf._header_text_color = "#FFFFFF"
+        pdf._header_label = "CONFIDENTIAL  \u2014  WOODENSHARK LLC PROPRIETARY"
+        pdf._company_color = C["DARK"]
+
         agreement_date = self.format_date(emp.agreement_date or date.today())
         effective_date = self.format_date(emp.effective_date or emp.agreement_date or date.today())
 
         self._title_page(pdf, emp, agreement_date, effective_date)
         self._content_pages(pdf, emp, agreement_date, effective_date)
-
-        total = pdf.pages_count
-        for i in range(1, total + 1):
-            pdf.page = i
-            if i > 1:
-                self._draw_header(pdf, i, total)
-                self._draw_footer(pdf, i, total)
-            self._draw_watermark(pdf)
 
         buf = BytesIO()
         pdf.output(buf)
@@ -54,12 +52,11 @@ class ContractPdfGenerator(BasePdfGenerator):
 
     # ── Title Page ──
 
-    def _title_page(self, pdf: FPDF, emp: EmployeeData, agreement_date: str, effective_date: str) -> None:
+    def _title_page(self, pdf: WsPDF, emp: EmployeeData, agreement_date: str, effective_date: str) -> None:
         pdf.add_page()
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
 
-        # Brand
         pdf.set_y(30)
         pdf.set_x(ml)
         pdf.set_font(FONTS["HEADING"], "B", 32)
@@ -69,32 +66,27 @@ class ContractPdfGenerator(BasePdfGenerator):
         self._set_color(pdf, C["CYAN_DARK"])
         pdf.cell(0, 12, " LLC", new_x="LMARGIN", new_y="NEXT")
 
-        # Cyan line
         y = pdf.get_y() + 2
         self._set_color(pdf, C["CYAN"], "draw")
         pdf.set_line_width(0.4)
         pdf.line(ml, y, ml + cw, y)
         pdf.set_y(y + 12)
 
-        # Document title
         pdf.set_font(FONTS["HEADING"], "B", 28)
         self._set_color(pdf, C["NAVY"])
         pdf.cell(0, 10, "CONSULTING AGREEMENT", new_x="LMARGIN", new_y="NEXT")
 
-        # Navy line
         y = pdf.get_y() + 2
         self._set_color(pdf, C["NAVY"], "draw")
         pdf.set_line_width(0.6)
         pdf.line(ml, y, ml + cw, y)
         pdf.set_y(y + 4)
 
-        # Subtitle
         pdf.set_font(FONTS["HEADING"], "", 14)
         self._set_color(pdf, C["TEXT_SECONDARY"])
         pdf.cell(0, 8, "Professional Services & Technical Consulting", new_x="LMARGIN", new_y="NEXT")
         pdf.set_y(pdf.get_y() + 10)
 
-        # Info table
         self._info_row(pdf, "AGREEMENT DATE", agreement_date)
         self._info_row(pdf, "EFFECTIVE DATE", effective_date)
         y = pdf.get_y() + 2
@@ -105,7 +97,6 @@ class ContractPdfGenerator(BasePdfGenerator):
         self._info_row(pdf, "PARTY A (CLIENT)", self.company.name)
         self._info_row(pdf, "PARTY B (CONSULTANT)", emp.full_name_lat or "")
 
-        # Classification badge
         pdf.set_y(260)
         pdf.set_font(FONTS["HEADING"], "", 9)
         self._set_color(pdf, C["TEXT_MUTED"])
@@ -114,7 +105,7 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.set_text_color(255, 255, 255)
         pdf.cell(40, 6, "CONFIDENTIAL", fill=True, align="C")
 
-    def _info_row(self, pdf: FPDF, label: str, value: str) -> None:
+    def _info_row(self, pdf: WsPDF, label: str, value: str) -> None:
         ml = DIMS["MARGIN_LEFT"]
         pdf.set_x(ml)
         pdf.set_font(FONTS["HEADING"], "", 8.5)
@@ -126,7 +117,7 @@ class ContractPdfGenerator(BasePdfGenerator):
 
     # ── Content Pages ──
 
-    def _content_pages(self, pdf: FPDF, emp: EmployeeData, agreement_date: str, effective_date: str) -> None:
+    def _content_pages(self, pdf: WsPDF, emp: EmployeeData, agreement_date: str, effective_date: str) -> None:
         pdf.add_page()
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
@@ -139,13 +130,11 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.multi_cell(cw, 5, f"THIS CONSULTING AGREEMENT (the \u201cAgreement\u201d) dated {agreement_date}", align="J")
         pdf.ln(4)
 
-        # BETWEEN
         pdf.set_font(FONTS["HEADING"], "B", 12)
         self._set_color(pdf, C["DARK"])
         pdf.cell(0, 6, "BETWEEN:", align="C", new_x="LMARGIN", new_y="NEXT")
         pdf.ln(4)
 
-        # Party boxes
         self._party_boxes(pdf, emp)
 
         # BACKGROUND (Section 1)
@@ -153,14 +142,12 @@ class ContractPdfGenerator(BasePdfGenerator):
         for text in S.BACKGROUND:
             self._body_para(pdf, text)
 
-        # Client details
         self._body_para(
             pdf,
             f"{self.company.name}, a company incorporated and registered in the United States of America "
             f"whose registered office is at {self.company.address_flat} (hereinafter the \u201cClient\u201d)"
         )
 
-        # Employee details
         dob = self.format_date(emp.date_of_birth)
         pi = self.format_date(emp.passport_issued)
         pe = self.format_date(emp.passport_expires)
@@ -171,7 +158,6 @@ class ContractPdfGenerator(BasePdfGenerator):
             f"with the primary address of residence {emp.address or ''}"
         )
 
-        # IN CONSIDERATION
         pdf.set_font(FONTS["BODY"], "B", 11)
         self._set_color(pdf, C["TEXT_PRIMARY"])
         pdf.set_x(ml)
@@ -192,35 +178,32 @@ class ContractPdfGenerator(BasePdfGenerator):
 
             for text in paragraphs:
                 if text is None:
-                    # Special content
                     if title == "SERVICES PROVIDED":
                         self._callout_box(pdf, emp.service_description or "UAV Systems Development Services")
                     elif title == "NOTICE":
                         self._notice_boxes(pdf, emp)
                     elif title == "COMPENSATION":
-                        comp_text = (
+                        self._body_para(pdf, (
                             f"The Consultant will charge the Client for the Services at the rate of "
                             f"{rate_fmt} ({rate_words}) USD plus {int(TAX_RATE * 100)}% tax, totaling "
                             f"{total_fmt} ({total_words}) USD per month (the \u201cCompensation\u201d) "
                             f"for full time employment."
-                        )
-                        self._body_para(pdf, comp_text)
+                        ))
                 else:
                     rendered = text.replace("{end_date}", CONTRACT_END_DATE)
                     rendered = rendered.replace("{notice_days}", str(TERMINATION_NOTICE_DAYS))
                     self._body_para(pdf, rendered)
 
-        # Signature block
         self._signature_block(pdf, emp, effective_date)
 
-    # ── Rendering helpers ──
+    # ── Helpers ──
 
-    def _check_page_break(self, pdf: FPDF, needed: float = 30) -> None:
+    def _check_page_break(self, pdf: WsPDF, needed: float = 30) -> None:
         if pdf.get_y() + needed > DIMS["CONTENT_BOTTOM"]:
             pdf.add_page()
             pdf.set_y(DIMS["CONTENT_TOP"] + 2)
 
-    def _section_heading(self, pdf: FPDF, title: str) -> None:
+    def _section_heading(self, pdf: WsPDF, title: str) -> None:
         self._check_page_break(pdf, 20)
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
@@ -235,7 +218,7 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.line(ml, y, ml + cw, y)
         pdf.set_y(y + 3)
 
-    def _body_para(self, pdf: FPDF, text: str) -> None:
+    def _body_para(self, pdf: WsPDF, text: str) -> None:
         self._check_page_break(pdf)
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
@@ -245,7 +228,7 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.multi_cell(cw, 5, text, align="J")
         pdf.ln(2)
 
-    def _callout_box(self, pdf: FPDF, text: str) -> None:
+    def _callout_box(self, pdf: WsPDF, text: str) -> None:
         self._check_page_break(pdf, 16)
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
@@ -262,15 +245,13 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.cell(cw - 8, 8, text, align="C")
         pdf.set_y(y + 14)
 
-    def _notice_boxes(self, pdf: FPDF, emp: EmployeeData) -> None:
+    def _notice_boxes(self, pdf: WsPDF, emp: EmployeeData) -> None:
         self._check_page_break(pdf, 16)
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
-
         self._set_color(pdf, C["LIGHT_GRAY"], "draw")
         pdf.set_line_width(0.15)
 
-        # Client notice
         y = pdf.get_y()
         pdf.line(ml, y + 8, ml + cw, y + 8)
         pdf.set_xy(ml + 4, y + 1)
@@ -282,7 +263,6 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.cell(0, 5, "mitgor@woodenshark.com", new_x="LMARGIN", new_y="NEXT")
         pdf.set_y(y + 10)
 
-        # Consultant notice
         y = pdf.get_y()
         pdf.line(ml, y + 8, ml + cw, y + 8)
         pdf.set_xy(ml + 4, y + 1)
@@ -294,14 +274,13 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.cell(0, 5, emp.work_email or emp.phone or "", new_x="LMARGIN", new_y="NEXT")
         pdf.set_y(y + 12)
 
-    def _party_boxes(self, pdf: FPDF, emp: EmployeeData) -> None:
+    def _party_boxes(self, pdf: WsPDF, emp: EmployeeData) -> None:
         self._check_page_break(pdf, 40)
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
         box_w = (cw - 6) / 2
         y_start = pdf.get_y()
 
-        # Client box
         self._set_color(pdf, C["FAFBFC"], "fill")
         self._set_color(pdf, C["CYAN"], "draw")
         pdf.set_line_width(0.5)
@@ -312,23 +291,21 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.set_xy(ml + 4, y_start + 3)
         pdf.set_font(FONTS["HEADING"], "B", 9)
         self._set_color(pdf, C["CYAN_DARK"])
-        pdf.cell(0, 4, "CLIENT", new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 4, "CLIENT", new_x="LEFT", new_y="NEXT")
         pdf.set_x(ml + 4)
         pdf.set_font(FONTS["BODY"], "B", 11)
         self._set_color(pdf, C["TEXT_PRIMARY"])
-        pdf.cell(0, 5, self.company.name, new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 5, self.company.name, new_x="LEFT", new_y="NEXT")
         pdf.set_x(ml + 4)
         pdf.set_font(FONTS["BODY"], "", 10)
         self._set_color(pdf, C["TEXT_SECONDARY"])
         for line in self.company.address.split("\n"):
-            pdf.cell(0, 4, line, new_x="LEFT", new_y="NEXT")
+            pdf.cell(box_w - 8, 4, line, new_x="LEFT", new_y="NEXT")
             pdf.set_x(ml + 4)
-        pdf.set_x(ml + 4)
         pdf.set_font(FONTS["BODY"], "I", 10)
         self._set_color(pdf, C["TEXT_MUTED"])
-        pdf.cell(0, 4, '(the \u201cClient\u201d)', new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 4, '(the \u201cClient\u201d)', new_x="LEFT", new_y="NEXT")
 
-        # Consultant box
         x2 = ml + box_w + 6
         self._set_color(pdf, C["FAFBFC"], "fill")
         self._set_color(pdf, C["CYAN"], "draw")
@@ -339,28 +316,27 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.set_xy(x2 + 4, y_start + 3)
         pdf.set_font(FONTS["HEADING"], "B", 9)
         self._set_color(pdf, C["CYAN_DARK"])
-        pdf.cell(0, 4, "CONSULTANT", new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 4, "CONSULTANT", new_x="LEFT", new_y="NEXT")
         pdf.set_x(x2 + 4)
         pdf.set_font(FONTS["BODY"], "B", 11)
         self._set_color(pdf, C["TEXT_PRIMARY"])
-        pdf.cell(0, 5, emp.full_name_lat or "", new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 5, emp.full_name_lat or "", new_x="LEFT", new_y="NEXT")
         pdf.set_x(x2 + 4)
         pdf.set_font(FONTS["BODY"], "", 10)
         self._set_color(pdf, C["TEXT_SECONDARY"])
-        pdf.cell(0, 4, emp.address or "", new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 4, emp.address or "", new_x="LEFT", new_y="NEXT")
         pdf.set_x(x2 + 4)
         pdf.set_font(FONTS["BODY"], "I", 10)
         self._set_color(pdf, C["TEXT_MUTED"])
-        pdf.cell(0, 4, '(the \u201cConsultant\u201d)', new_x="LEFT", new_y="NEXT")
+        pdf.cell(box_w - 8, 4, '(the \u201cConsultant\u201d)', new_x="LEFT", new_y="NEXT")
 
         pdf.set_y(y_start + 36)
 
-    def _signature_block(self, pdf: FPDF, emp: EmployeeData, effective_date: str) -> None:
+    def _signature_block(self, pdf: WsPDF, emp: EmployeeData, effective_date: str) -> None:
         self._check_page_break(pdf, 80)
         ml = DIMS["MARGIN_LEFT"]
         cw = DIMS["CONTENT_W"]
 
-        # Navy line
         pdf.ln(6)
         y = pdf.get_y()
         self._set_color(pdf, C["NAVY"], "draw")
@@ -368,26 +344,20 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.line(ml, y, ml + cw, y)
         pdf.set_y(y + 4)
 
-        # Witness
         pdf.set_font(FONTS["BODY"], "I", 11)
         self._set_color(pdf, C["TEXT_PRIMARY"])
         pdf.set_x(ml)
-        pdf.multi_cell(
-            cw, 5,
-            f"IN WITNESS WHEREOF the Parties have duly affixed their signatures under hand and seal on {effective_date}.",
-            align="J",
-        )
+        pdf.multi_cell(cw, 5, f"IN WITNESS WHEREOF the Parties have duly affixed their signatures under hand and seal on {effective_date}.", align="J")
         pdf.ln(4)
 
         box_w = (cw - 6) / 2
         y_start = pdf.get_y()
 
-        # Client signature
+        # Client
         self._set_color(pdf, C["CYAN"], "draw")
         pdf.set_line_width(0.4)
         pdf.line(ml, y_start, ml + box_w, y_start)
         pdf.set_xy(ml, y_start + 2)
-
         pdf.set_font(FONTS["HEADING"], "B", 9)
         self._set_color(pdf, C["CYAN_DARK"])
         pdf.cell(box_w, 4, "CLIENT", new_x="LEFT", new_y="NEXT")
@@ -401,8 +371,6 @@ class ContractPdfGenerator(BasePdfGenerator):
         for line in self.company.address.split("\n"):
             pdf.cell(box_w, 3.5, line, new_x="LEFT", new_y="NEXT")
             pdf.set_x(ml)
-
-        # Bank details
         pdf.set_font(FONTS["HEADING"], "B", 9)
         self._set_color(pdf, C["TEXT_MUTED"])
         pdf.cell(box_w, 5, "Bank account:", new_x="LEFT", new_y="NEXT")
@@ -423,13 +391,12 @@ class ContractPdfGenerator(BasePdfGenerator):
         self._set_color(pdf, C["TEXT_MUTED"])
         pdf.cell(box_w, 4, "Signature", new_x="LEFT", new_y="NEXT")
 
-        # Consultant signature
+        # Consultant
         x2 = ml + box_w + 6
         pdf.set_xy(x2, y_start)
         self._set_color(pdf, C["CYAN"], "draw")
         pdf.line(x2, y_start, x2 + box_w, y_start)
         pdf.set_xy(x2, y_start + 2)
-
         pdf.set_font(FONTS["HEADING"], "B", 9)
         self._set_color(pdf, C["CYAN_DARK"])
         pdf.cell(box_w, 4, "CONSULTANT", new_x="LEFT", new_y="NEXT")
@@ -441,8 +408,6 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.set_font(FONTS["BODY"], "", 9)
         self._set_color(pdf, C["TEXT_SECONDARY"])
         pdf.cell(box_w, 3.5, emp.address or "", new_x="LEFT", new_y="NEXT")
-
-        # Bank details
         pdf.set_x(x2)
         pdf.set_font(FONTS["HEADING"], "B", 9)
         self._set_color(pdf, C["TEXT_MUTED"])
@@ -463,53 +428,3 @@ class ContractPdfGenerator(BasePdfGenerator):
         pdf.set_font(FONTS["HEADING"], "", 8)
         self._set_color(pdf, C["TEXT_MUTED"])
         pdf.cell(box_w, 4, emp.full_name_lat or "", new_x="LEFT", new_y="NEXT")
-
-    # ── Header / Footer ──
-
-    def _draw_header(self, pdf: FPDF, page: int, total: int) -> None:
-        pdf.set_fill_color(255, 255, 255)
-        pdf.rect(0, 0, 210, 15, style="F")
-
-        r, g, b = hex_to_rgb(C["NAVY"])
-        pdf.set_fill_color(r, g, b)
-        pdf.rect(0, 0, 210, 7, style="F")
-        pdf.set_font(FONTS["HEADING"], "", 6)
-        pdf.set_text_color(255, 255, 255)
-        pdf.set_xy(0, 2)
-        pdf.cell(210, 4, "CONFIDENTIAL  \u2014  WOODENSHARK LLC PROPRIETARY", align="C")
-
-        pdf.set_font(FONTS["HEADING"], "B", 7)
-        r, g, b = hex_to_rgb(C["DARK"])
-        pdf.set_text_color(r, g, b)
-        pdf.set_xy(18, 8)
-        pdf.cell(0, 4, "WOODENSHARK LLC")
-        pdf.set_font(FONTS["HEADING"], "", 7)
-        pdf.set_text_color(107, 107, 107)
-        pdf.set_xy(0, 8)
-        pdf.cell(192, 4, "Consulting Agreement", align="R")
-
-        r, g, b = hex_to_rgb(C["CYAN"])
-        pdf.set_draw_color(r, g, b)
-        pdf.set_line_width(0.4)
-        pdf.line(18, 13, 192, 13)
-
-    def _draw_footer(self, pdf: FPDF, page: int, total: int) -> None:
-        pdf.set_fill_color(255, 255, 255)
-        pdf.rect(0, 277, 210, 20, style="F")
-
-        pdf.set_draw_color(208, 208, 208)
-        pdf.set_line_width(0.15)
-        pdf.line(18, 283, 192, 283)
-
-        pdf.set_font(FONTS["HEADING"], "", 7)
-        pdf.set_text_color(107, 107, 107)
-        pdf.set_xy(0, 284)
-        pdf.cell(210, 4, f"Consulting Services Agreement  |  CONFIDENTIAL  |  Page {page} of {total}", align="C")
-
-        r, g, b = hex_to_rgb(C["NAVY"])
-        pdf.set_fill_color(r, g, b)
-        pdf.rect(0, 289, 210, 8, style="F")
-        pdf.set_font(FONTS["HEADING"], "", 6)
-        pdf.set_text_color(255, 255, 255)
-        pdf.set_xy(0, 291)
-        pdf.cell(210, 4, "CONFIDENTIAL  \u2014  WOODENSHARK LLC PROPRIETARY", align="C")
