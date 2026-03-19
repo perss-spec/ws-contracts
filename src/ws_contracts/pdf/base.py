@@ -29,6 +29,8 @@ class WsPDF(FPDF):
     def header(self):
         if self._is_title_page:
             return
+        # Watermark first — drawn BEFORE content so text appears on top
+        self._do_watermark()
         r, g, b = hex_to_rgb("#FFFFFF")
         self.set_fill_color(r, g, b)
         self.rect(0, 0, 210, 15, style="F")
@@ -61,9 +63,6 @@ class WsPDF(FPDF):
         if self._is_title_page:
             self._is_title_page = False
             return
-        # Watermark first (behind content conceptually)
-        self._do_watermark()
-
         self.set_fill_color(255, 255, 255)
         self.rect(0, 277, 210, 20, style="F")
 
