@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend hr.employee form: add button + Contract Details tab -->
+    <record id="view_employee_form_inherit_ws_contracts" model="ir.ui.view">
+        <field name="name">hr.employee.form.ws.contracts</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_generate_documents"
+                        string="Generate Documents"
+                        type="object"
+                        class="oe_highlight"
+                        icon="fa-file-pdf-o"/>
+            </xpath>
+
+            <!-- Contract Details tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Contract Details" name="ws_contract_details">
+                    <group>
+                        <group string="Personal (Latin)">
+                            <field name="ws_full_name_lat"/>
+                            <field name="ws_passport_number"/>
+                            <field name="ws_passport_issued"/>
+                            <field name="ws_passport_expires"/>
+                            <field name="ws_address_full"/>
+                        </group>
+                        <group string="Bank Details">
+                            <field name="ws_iban"/>
+                            <field name="ws_swift"/>
+                            <field name="ws_receiver_name"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Agreement">
+                            <field name="ws_rate_usd"/>
+                            <field name="ws_service_description"/>
+                            <field name="ws_agreement_date"/>
+                            <field name="ws_effective_date"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
