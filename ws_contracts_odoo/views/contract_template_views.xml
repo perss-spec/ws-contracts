@@ -9,8 +9,9 @@
             <tree>
                 <field name="name"/>
                 <field name="company_id"/>
-                <field name="doc_type"/>
+                <field name="doc_type" widget="badge"/>
                 <field name="local_lang"/>
+                <field name="primary_color" widget="color"/>
                 <field name="active" column_invisible="True"/>
             </tree>
         </field>
@@ -44,8 +45,8 @@
                         <page string="Branding" name="branding">
                             <group>
                                 <group string="Colors">
-                                    <field name="primary_color"/>
-                                    <field name="accent_color"/>
+                                    <field name="primary_color" widget="color"/>
+                                    <field name="accent_color" widget="color"/>
                                 </group>
                                 <group string="Header &amp; Watermark">
                                     <field name="watermark_text"/>

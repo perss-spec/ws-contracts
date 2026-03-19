@@ -24,10 +24,12 @@ class ContractDocument(models.Model):
     employee_id = fields.Many2one(
         "hr.employee", string="Employee",
         required=True, ondelete="cascade",
+        tracking=True,
     )
     template_id = fields.Many2one(
         "ws.contract.template", string="Template",
         required=True, ondelete="restrict",
+        tracking=True,
     )
     state = fields.Selection(
         [
@@ -45,6 +47,7 @@ class ContractDocument(models.Model):
     pdf_attachment_id = fields.Many2one(
         "ir.attachment", string="PDF File",
         ondelete="set null", copy=False,
+        tracking=True,
     )
     # Store sign request ID as Integer to avoid hard dependency on sign module
     sign_request_id = fields.Integer(
@@ -59,6 +62,23 @@ class ContractDocument(models.Model):
     doc_type = fields.Selection(
         related="template_id.doc_type", store=True, readonly=True,
     )
+
+    # ── Display name ──
+    @api.depends("employee_id.name", "template_id.doc_title", "create_date")
+    def _compute_display_name(self):
+        for rec in self:
+            emp = rec.employee_id.name or "?"
+            doc = rec.template_id.doc_title or rec.doc_type or "Document"
+            dt = rec.create_date.strftime("%Y-%m-%d") if rec.create_date else "draft"
+            rec.display_name = f"{doc} — {emp} ({dt})"
+
+    # ── Partial unique index: no duplicate drafts ──
+    def init(self):
+        self.env.cr.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS ws_contract_doc_unique_draft
+            ON ws_contract_document (employee_id, template_id)
+            WHERE state = 'draft'
+        """)
 
     def action_generate(self):
         """Generate PDF from template + employee data."""
@@ -276,3 +296,21 @@ class ContractDocument(models.Model):
                 _logger.exception(
                     "Error checking sign status for document %s", doc.id,
                 )
+
+    # ── Bulk actions (called from server actions) ──
+    def action_bulk_generate(self):
+        """Generate PDF for selected draft documents."""
+        drafts = self.filtered(lambda d: d.state == "draft")
+        errors = []
+        for doc in drafts:
+            try:
+                doc.action_generate()
+            except UserError as e:
+                errors.append(f"{doc.employee_id.name}: {e.args[0]}")
+        if errors:
+            raise UserError("Some documents failed:\n" + "\n".join(errors))
+
+    def action_bulk_archive(self):
+        """Archive selected documents."""
+        archivable = self.filtered(lambda d: d.state not in ("archived", "draft"))
+        archivable.write({"state": "archived"})

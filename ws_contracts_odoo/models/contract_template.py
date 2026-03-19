@@ -10,6 +10,11 @@ class ContractTemplate(models.Model):
     _description = "Contract Template"
     _order = "company_id, doc_type, name"
 
+    _sql_constraints = [
+        ("unique_name_company", "UNIQUE(name, company_id)",
+         "Template name must be unique within a company."),
+    ]
+
     name = fields.Char("Template Name", required=True)
     company_id = fields.Many2one(
         "res.company", string="Company", required=True,
@@ -38,19 +43,22 @@ class ContractTemplate(models.Model):
     signatory_title = fields.Char("Signatory Title")
     signatory_email = fields.Char("Signatory Email")
     company_address = fields.Text("Company Address (for PDF)")
-    company_address_flat = fields.Char("Company Address (flat)")
+    company_address_flat = fields.Char("Company Address (flat)",
+                                      help="One-line address for PDF footer")
 
     # Local language for bilingual docs
     local_lang = fields.Selection(
         [("none", "English only"), ("pl", "Polish"), ("uk", "Ukrainian")],
         string="Local Language",
         default="none",
+        help="Adds bilingual text (italic, smaller font) below English content",
     )
 
     # Document-specific settings
     nda_term_years = fields.Integer("NDA Term (years)", default=5)
     contract_end_date = fields.Date("Contract End Date")
-    tax_rate = fields.Float("Tax Rate", default=0.06, digits=(5, 4))
+    tax_rate = fields.Float("Tax Rate", default=0.06, digits=(5, 4),
+                            help="Decimal rate, e.g. 0.06 = 6%")
     termination_notice_days = fields.Integer("Termination Notice (days)", default=30)
 
     # Bank details
@@ -65,7 +73,8 @@ class ContractTemplate(models.Model):
     )
 
     # Classification
-    classification_label = fields.Char("Classification Label", default="STRICTLY CONFIDENTIAL")
+    classification_label = fields.Char("Classification Label", default="STRICTLY CONFIDENTIAL",
+                                       help="Shown in PDF header, e.g. STRICTLY CONFIDENTIAL")
 
     # Header
     header_label = fields.Char(

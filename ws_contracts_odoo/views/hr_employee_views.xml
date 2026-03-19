@@ -25,27 +25,40 @@
                         icon="fa-file-text-o">
                     <field name="ws_document_count" widget="statinfo" string="Documents"/>
                 </button>
+                <button name="action_view_pending_sign_documents"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o"
+                        invisible="ws_pending_sign_count == 0">
+                    <field name="ws_pending_sign_count" widget="statinfo" string="Pending Sign"/>
+                </button>
             </xpath>
 
             <!-- Contract Details tab -->
             <xpath expr="//notebook" position="inside">
                 <page string="Contract Details" name="ws_contract_details">
-                    <group>
-                        <group string="Personal (Latin)">
+                    <group string="Personal">
+                        <group>
                             <field name="ws_full_name_lat"/>
+                            <field name="ws_address_full"/>
+                        </group>
+                    </group>
+                    <group string="Passport">
+                        <group>
                             <field name="ws_passport_number"/>
                             <field name="ws_passport_issued"/>
                             <field name="ws_passport_expires"/>
-                            <field name="ws_address_full"/>
                         </group>
-                        <group string="Bank Details">
+                    </group>
+                    <group string="Bank Details">
+                        <group>
                             <field name="ws_iban"/>
                             <field name="ws_swift"/>
                             <field name="ws_receiver_name"/>
                         </group>
                     </group>
-                    <group>
-                        <group string="Agreement">
+                    <group string="Agreement">
+                        <group>
                             <field name="ws_rate_usd"/>
                             <field name="ws_service_description"/>
                             <field name="ws_agreement_date"/>
@@ -57,13 +70,14 @@
                 <!-- Documents tab -->
                 <page string="Contracts &amp; Documents" name="ws_documents">
                     <field name="ws_document_ids">
-                        <tree>
+                        <tree decoration-danger="state == 'generated'">
                             <field name="template_id"/>
                             <field name="doc_type"/>
                             <field name="state" widget="badge"
                                    decoration-info="state == 'draft'"
                                    decoration-success="state == 'signed'"
-                                   decoration-warning="state == 'sent_for_sign'"/>
+                                   decoration-warning="state == 'sent_for_sign'"
+                                   decoration-danger="state == 'generated'"/>
                             <field name="generated_date"/>
                             <field name="signed_date"/>
                         </tree>

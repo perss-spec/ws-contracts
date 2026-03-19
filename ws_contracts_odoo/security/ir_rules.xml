@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══ Multi-company: Contract Template ═══ -->
+    <record id="ws_contract_template_company_rule" model="ir.rule">
+        <field name="name">Contract Template: multi-company</field>
+        <field name="model_id" ref="model_ws_contract_template"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- ═══ Multi-company: Contract Document ═══ -->
+    <record id="ws_contract_document_company_rule" model="ir.rule">
+        <field name="name">Contract Document: multi-company</field>
+        <field name="model_id" ref="model_ws_contract_document"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+</odoo>

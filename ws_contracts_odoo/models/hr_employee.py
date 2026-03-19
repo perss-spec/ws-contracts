@@ -33,11 +33,23 @@ class HrEmployee(models.Model):
     ws_document_count = fields.Integer(
         compute="_compute_ws_document_count", string="Documents",
     )
+    ws_pending_sign_count = fields.Integer(
+        compute="_compute_ws_pending_sign_count", string="Pending Sign",
+    )
 
     @api.depends("ws_document_ids")
     def _compute_ws_document_count(self):
         for rec in self:
             rec.ws_document_count = len(rec.ws_document_ids)
+
+    @api.depends("ws_document_ids.state")
+    def _compute_ws_pending_sign_count(self):
+        for rec in self:
+            rec.ws_pending_sign_count = len(
+                rec.ws_document_ids.filtered(
+                    lambda d: d.state in ("generated", "sent_for_sign")
+                )
+            )
 
     def action_view_contract_documents(self):
         self.ensure_one()
@@ -47,6 +59,20 @@ class HrEmployee(models.Model):
             "res_model": "ws.contract.document",
             "view_mode": "tree,form",
             "domain": [("employee_id", "=", self.id)],
+            "context": {"default_employee_id": self.id},
+        }
+
+    def action_view_pending_sign_documents(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Pending Signature",
+            "res_model": "ws.contract.document",
+            "view_mode": "tree,form",
+            "domain": [
+                ("employee_id", "=", self.id),
+                ("state", "in", ("generated", "sent_for_sign")),
+            ],
             "context": {"default_employee_id": self.id},
         }
 
