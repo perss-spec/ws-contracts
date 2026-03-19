@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ============================================================ -->
+        <!-- Template: Woodenshark LLC Consulting Agreement                -->
+        <!-- ============================================================ -->
+        <record id="ws_contract_template_woodenshark_contract" model="ws.contract.template">
+            <field name="name">Consulting Agreement — Woodenshark LLC</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="doc_type">contract</field>
+            <field name="primary_color">#0A0E17</field>
+            <field name="accent_color">#00BCD4</field>
+            <field name="watermark_text">WOODENSHARK LLC CONFIDENTIAL</field>
+            <field name="signatory_email">mitgor@woodenshark.com</field>
+            <field name="company_address">3411 Silverside Road, Suite 104
+Wilmington, DE 19810, USA</field>
+            <field name="company_address_flat">3411 Silverside Road, Suite 104, Rodney Building, Wilmington, DE, 19810</field>
+            <field name="local_lang">none</field>
+            <field name="contract_end_date">2026-12-31</field>
+            <field name="tax_rate">0.06</field>
+            <field name="termination_notice_days">30</field>
+            <field name="bank_swift">CMFGUS33</field>
+            <field name="bank_account">822000034828</field>
+            <field name="bank_name">Wise Inc</field>
+            <field name="classification_label">CONFIDENTIAL</field>
+            <field name="header_label">CONFIDENTIAL  —  WOODENSHARK LLC PROPRIETARY</field>
+            <field name="doc_subtitle">Professional Services &amp; Technical Consulting</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Sections                                                      -->
+        <!-- ============================================================ -->
+
+        <!-- Section 1: BACKGROUND (seq 10) -->
+        <record id="ws_contract_section_01_background" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">10</field>
+            <field name="title_en">1. BACKGROUND</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Client is of the opinion that the Consultant has the necessary qualifications, experience and abilities to provide consulting services to the Client.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Consultant agrees to provide such consulting services to the Client on the terms and conditions set out in this Agreement.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;This Consulting Agreement (hereinafter the \u201cAgreement\u201d) states the terms and conditions that govern the contractual agreement by and between&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;{company_name}, a company incorporated and registered in the United States of America whose registered office is at {company_address_flat} (hereinafter the \u201cClient\u201d)&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;{employee_name}, with the date of birth {dob}, the holder of Ukrainian Foreign Passport \u2116 {passport_number} issued on {passport_issued} and valid till {passport_expires}, with the primary address of residence {address}&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;bold&quot;: true, &quot;text&quot;: &quot;IN CONSIDERATION OF the matters described above and of the mutual benefits and obligations set forth in this Agreement, the receipt and sufficiency of which consideration is hereby acknowledged, the Client and the Consultant (individually, the \u201cParty\u201d and collectively the \u201cParties\u201d to this Agreement) agree as follows:&quot;}
+]</field>
+        </record>
+
+        <!-- Section 2: SERVICES PROVIDED (seq 20) -->
+        <record id="ws_contract_section_02_services_provided" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">20</field>
+            <field name="title_en">2. SERVICES PROVIDED</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Client hereby agrees to engage a Consultant to provide the Client with the following consulting services (the \u201cServices\u201d):&quot;},
+    {&quot;type&quot;: &quot;service_callout&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Services will also include any other consulting tasks which the Parties may agree on. The Consultant hereby agrees to provide such Services to the Client.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 3: TERM OF AGREEMENT (seq 30) -->
+        <record id="ws_contract_section_03_term_of_agreement" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">30</field>
+            <field name="title_en">3. TERM OF AGREEMENT</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The term of this Agreement (the \u201cTerm\u201d) will begin on the date of this Agreement and will remain in full force and effect until {contract_end_date}, subject to earlier termination as provided in this Agreement. The Term may be extended with the written consent of the Parties.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;In the event that either Party wishes to terminate this Agreement prior to {contract_end_date} that Party will be required to provide {termination_notice_days} days\u2019 written notice to the other Party.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 4: PERFORMANCE (seq 40) -->
+        <record id="ws_contract_section_04_performance" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">40</field>
+            <field name="title_en">4. PERFORMANCE</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Parties agree to do everything necessary to ensure that the terms of this Agreement take effect.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 5: CURRENCY (seq 50) -->
+        <record id="ws_contract_section_05_currency" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">50</field>
+            <field name="title_en">5. CURRENCY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Except as otherwise provided in this Agreement, all monetary amounts referred to in this Agreement are in USD.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 6: COMPENSATION (seq 60) -->
+        <record id="ws_contract_section_06_compensation" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">60</field>
+            <field name="title_en">6. COMPENSATION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;compensation&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Client will be invoiced every month.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Invoices submitted by the Consultant to the Client are due upon receipt.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 7: REIMBURSEMENT OF EXPENSES (seq 70) -->
+        <record id="ws_contract_section_07_reimbursement" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">70</field>
+            <field name="title_en">7. REIMBURSEMENT OF EXPENSES</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Consultant will be reimbursed all reasonable and necessary expenses incurred by the Consultant in connection with providing the Services, such as travel expenses and other related to business development expenses.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;All expenses must be pre-approved by the Client.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 8: CONFIDENTIALITY (seq 80) -->
+        <record id="ws_contract_section_08_confidentiality" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">80</field>
+            <field name="title_en">8. CONFIDENTIALITY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Confidential information (the \u201cConfidential Information\u201d) refers to any data or information relating to the Client, whether business or personal, which would reasonably be considered to be private or proprietary to the Client and that is not generally known and where the release of that Confidential Information could reasonably be expected to cause harm to the Client.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Consultant agrees that they will not disclose, divulge, reveal, report or use, for any purpose, any Confidential Information which the Consultant has obtained, except as authorized by the Client or as required by law. The obligations of confidentiality will apply during the Term and will survive indefinitely upon termination of this Agreement.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;All written and oral information and material disclosed or provided by the Client to the Consultant under this Agreement is Confidential Information regardless of whether it was provided before or after the date of this Agreement or how it was provided to the Consultant.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 9: OWNERSHIP OF INTELLECTUAL PROPERTY (seq 90) -->
+        <record id="ws_contract_section_09_ip_ownership" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">90</field>
+            <field name="title_en">9. OWNERSHIP OF INTELLECTUAL PROPERTY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;All intellectual property and related material, including any trade secrets, moral rights, goodwill, relevant registrations or applications for registration, and rights in any patent, copyright, trademark, trade dress, industrial design and trade name (the \u201cIntellectual Property\u201d) that is developed or produced under this Agreement, is a \u201cwork made for hire\u201d and will be the sole property of the Client. The use of the Intellectual Property by the Client will not be restricted in any manner.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Consultant may not use the Intellectual Property for any purpose other than that contracted for in this Agreement except with the written consent of the Client. The Consultant will be responsible for any and all damages resulting from the unauthorized use of the Intellectual Property.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 10: RETURN OF PROPERTY (seq 100) -->
+        <record id="ws_contract_section_10_return_property" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">100</field>
+            <field name="title_en">10. RETURN OF PROPERTY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Upon the expiration or termination of this Agreement, the Consultant will return to the Client any property, documentation, records, or Confidential Information which is the property of the Client.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 11: CAPACITY / INDEPENDENT CONTRACTOR (seq 110) -->
+        <record id="ws_contract_section_11_independent_contractor" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">110</field>
+            <field name="title_en">11. CAPACITY / INDEPENDENT CONTRACTOR</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;In providing the Services under this Agreement it is expressly agreed that the Consultant is acting as an independent contractor and not as an employee. The Consultant and the Client acknowledge that this Agreement does not create a partnership or joint venture between them, and is exclusively a contract for service. The Client is not required to pay, or make any contributions to any social security, local, state or federal tax, unemployment compensation, workers\u2019 compensation, insurance premium, profit-sharing, pension or any other employee benefit for the Consultant during the Term. The Consultant is responsible for paying, and complying with reporting requirements for, all local, state and federal taxes related to payments made to the Consultant under this Agreement.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 12: NOTICE (seq 120) -->
+        <record id="ws_contract_section_12_notice" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">120</field>
+            <field name="title_en">12. NOTICE</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;All notices, requests, demands or other communications required or permitted by the terms of this Agreement will be given in writing and delivered to the Parties at the following addresses:&quot;},
+    {&quot;type&quot;: &quot;notice_boxes&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;or to such other address as either Party may from time to time notify the other, and will be deemed to be properly delivered (a) immediately upon being served personally, (b) two days after being deposited with the postal service if served by registered mail, or (c) the following day after being deposited with an overnight courier.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 13: INDEMNIFICATION (seq 130) -->
+        <record id="ws_contract_section_13_indemnification" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">130</field>
+            <field name="title_en">13. INDEMNIFICATION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Except to the extent paid in settlement from any applicable insurance policies, and to the extent permitted by applicable law, each Party agrees to indemnify and hold harmless the other Party, and its respective affiliates, officers, agents, employees, and permitted successors and assigns against any and all claims, losses, damages, liabilities, penalties, punitive damages, expenses, reasonable legal fees and costs of any kind or amount whatsoever, which result from or arise out of any act or omission of the indemnifying party, its respective affiliates, officers, agents, employees, and permitted successors and assigns that occurs in connection with this Agreement. This indemnification shall survive the termination of this Agreement.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 14: MODIFICATION OF AGREEMENT (seq 140) -->
+        <record id="ws_contract_section_14_modification" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">140</field>
+            <field name="title_en">14. MODIFICATION OF AGREEMENT</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Any amendment or modification of this Agreement or additional obligation assumed by either Party in connection with this Agreement will only be binding if evidenced in writing signed by each Party or an authorized representative of each Party.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 15: TIME OF THE ESSENCE (seq 150) -->
+        <record id="ws_contract_section_15_time_essence" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">150</field>
+            <field name="title_en">15. TIME OF THE ESSENCE</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Time is of the essence in this Agreement. No extension or variation of this Agreement will operate as a waiver of this provision.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 16: ASSIGNMENT (seq 160) -->
+        <record id="ws_contract_section_16_assignment" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">160</field>
+            <field name="title_en">16. ASSIGNMENT</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The Consultant will not voluntarily, or by operation of law, assign or otherwise transfer its obligations under this Agreement without the prior written consent of the Client.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 17: ENTIRE AGREEMENT (seq 170) -->
+        <record id="ws_contract_section_17_entire_agreement" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">170</field>
+            <field name="title_en">17. ENTIRE AGREEMENT</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;It is agreed that there is no representation, warranty, collateral agreement or condition affecting this Agreement except as expressly provided in this Agreement.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 18: ENUREMENT (seq 180) -->
+        <record id="ws_contract_section_18_enurement" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">180</field>
+            <field name="title_en">18. ENUREMENT</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;This Agreement will enure to the benefit of and be binding on the Parties and their respective heirs, executors, administrators and permitted successors and assigns.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 19: TITLES / HEADINGS (seq 190) -->
+        <record id="ws_contract_section_19_titles_headings" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">190</field>
+            <field name="title_en">19. TITLES / HEADINGS</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Headings are inserted for the convenience of the Parties only and are not to be considered when interpreting this Agreement.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 20: GENDER (seq 200) -->
+        <record id="ws_contract_section_20_gender" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">200</field>
+            <field name="title_en">20. GENDER</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Words in the singular mean and include the plural and vice versa. Words in the masculine mean and include the feminine and vice versa.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 21: GOVERNING LAW (seq 210) -->
+        <record id="ws_contract_section_21_governing_law" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">210</field>
+            <field name="title_en">21. GOVERNING LAW</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;This Agreement will be governed by and construed in accordance with the laws of the state of Delaware.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 22: SEVERABILITY (seq 220) -->
+        <record id="ws_contract_section_22_severability" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">220</field>
+            <field name="title_en">22. SEVERABILITY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;In the event that any of the provisions of this Agreement are held to be invalid or unenforceable in whole or in part, all other provisions will nevertheless continue to be valid and enforceable with the invalid or unenforceable parts severed from the remainder of this Agreement.&quot;}
+]</field>
+        </record>
+
+        <!-- Section 23: WAIVER (seq 230) -->
+        <record id="ws_contract_section_23_waiver" model="ws.contract.template.section">
+            <field name="template_id" ref="ws_contract_template_woodenshark_contract"/>
+            <field name="sequence">230</field>
+            <field name="title_en">23. WAIVER</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The waiver by either Party of a breach, default, delay or omission of any of the provisions of this Agreement by the other Party will not be construed as a waiver of any subsequent breach of the same or other provisions.&quot;}
+]</field>
+        </record>
+
+    </data>
+</odoo>

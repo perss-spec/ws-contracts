@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Woodenshark LLC — NDA Template
+             ═══════════════════════════════════════════════════════════ -->
+        <record id="nda_template_woodenshark" model="ws.contract.template">
+            <field name="name">NDA — Woodenshark LLC</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="doc_type">nda</field>
+            <field name="primary_color">#8B0000</field>
+            <field name="accent_color">#D4AF37</field>
+            <field name="watermark_text">WOODENSHARK LLC CONFIDENTIAL</field>
+            <field name="signatory_email">mitgor@woodenshark.com</field>
+            <field name="company_address">3411 Silverside Road, Suite 104
+Wilmington, DE 19810, USA</field>
+            <field name="company_address_flat">3411 Silverside Road, Suite 104, Rodney Building, Wilmington, DE, 19810</field>
+            <field name="local_lang">none</field>
+            <field name="nda_term_years">5</field>
+            <field name="bank_swift">CMFGUS33</field>
+            <field name="bank_account">822000034828</field>
+            <field name="bank_name">Wise Inc</field>
+            <field name="classification_label">STRICTLY CONFIDENTIAL</field>
+            <field name="header_label">STRICTLY CONFIDENTIAL  —  PROPRIETARY &amp; RESTRICTED</field>
+            <field name="doc_subtitle">Proprietary &amp; Restricted Information Protection</field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             NDA Sections (1–12)
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- 1. DEFINITIONS -->
+        <record id="nda_ws_section_01" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">10</field>
+            <field name="title_en">1. DEFINITIONS</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.1&quot;, &quot;text&quot;: &quot;\u201cCompany\u201d shall mean Woodenshark LLC, as the Disclosing Party under this Agreement.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.2&quot;, &quot;text&quot;: &quot;\u201cConfidential Information\u201d shall mean any and all non-public, proprietary, or trade secret information, whether in oral, written, electronic, visual, or any other form, that is disclosed by or on behalf of the Company to the Receiving Party, including but not limited to the categories set forth in Section 2.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.3&quot;, &quot;text&quot;: &quot;\u201cReceiving Party\u201d shall mean the Party receiving Confidential Information.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.4&quot;, &quot;text&quot;: &quot;\u201cRepresentatives\u201d shall mean officers, directors, employees, agents, contractors, advisors, attorneys, and accountants who have a legitimate need to know the Confidential Information and who are bound by obligations of confidentiality no less restrictive than those set forth herein.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.5&quot;, &quot;text&quot;: &quot;\u201cPurpose\u201d shall mean the evaluation, performance, and administration of the Consulting Agreement, including research, design, development, engineering, testing, and production of UAV systems, Radio-Electronic Warfare systems, embedded firmware, flight control systems, and related defense technologies.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.6&quot;, &quot;text&quot;: &quot;\u201cMaterials\u201d shall mean all tangible and intangible embodiments of Confidential Information, including documents, drawings, schematics, prototypes, source code, firmware, datasets, reports, and any copies or derivatives thereof.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;1.7&quot;, &quot;text&quot;: &quot;\u201cTrade Secrets\u201d shall mean any information that derives independent economic value from not being generally known to or readily ascertainable by other persons, and is the subject of reasonable efforts to maintain its secrecy, as defined under the Delaware Uniform Trade Secrets Act and the Defend Trade Secrets Act of 2016.&quot;}
+]</field>
+        </record>
+
+        <!-- 2. CONFIDENTIAL INFORMATION -->
+        <record id="nda_ws_section_02" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">20</field>
+            <field name="title_en">2. CONFIDENTIAL INFORMATION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Confidential Information includes, without limitation, the following categories:&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(a)&quot;, &quot;text&quot;: &quot;Technical Information: designs, drawings, engineering specifications, schematics, PCB layouts, CAD/CAM files, algorithms, formulas, processes, inventions, research data, test data, flight test logs, telemetry data, and technical know-how;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(b)&quot;, &quot;text&quot;: &quot;Software and Firmware: source code, object code, firmware images, APIs, communication protocols, encryption keys, flight control algorithms, navigation algorithms, and related documentation;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(c)&quot;, &quot;text&quot;: &quot;Product Information: prototypes, product specifications, product roadmaps, production processes, manufacturing techniques, bill of materials, and supply chain data;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(d)&quot;, &quot;text&quot;: &quot;Business Information: business plans, strategies, pricing, financial data, customer lists, supplier lists, contract terms, and partnership discussions;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(e)&quot;, &quot;text&quot;: &quot;Defense and Military Information: information related to defense applications, military specifications, electronic warfare parameters, frequency data, signal characteristics, and any information subject to export control regulations including ITAR and EAR;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(f)&quot;, &quot;text&quot;: &quot;Intellectual Property: patent applications, invention disclosures, trade secrets, trademarks, copyrights, and any other proprietary rights.&quot;},
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;Confidential Information need not be marked as \u201cconfidential\u201d to be protected under this Agreement. Information disclosed orally shall be considered Confidential Information if it would reasonably be understood to be confidential given the nature of the information and the circumstances of disclosure.&quot;}
+]</field>
+        </record>
+
+        <!-- 3. OBLIGATIONS OF RECEIVING PARTY -->
+        <record id="nda_ws_section_03" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">30</field>
+            <field name="title_en">3. OBLIGATIONS OF RECEIVING PARTY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.1&quot;, &quot;text&quot;: &quot;The Receiving Party shall not, without the prior written consent of the Disclosing Party, disclose, publish, or otherwise make available any Confidential Information to any third party, except to its Representatives in accordance with this Agreement.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.2&quot;, &quot;text&quot;: &quot;The Receiving Party shall protect the Confidential Information using at least the same degree of care that it uses to protect its own confidential information, but in no event less than a reasonable degree of care.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.3&quot;, &quot;text&quot;: &quot;The Receiving Party shall use the Confidential Information solely for the Purpose and shall not use it for any other purpose, including reverse engineering, competitive analysis, or development of competing products.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.4&quot;, &quot;text&quot;: &quot;The Receiving Party shall not reverse engineer, disassemble, decompile, or otherwise attempt to derive the composition, structure, or underlying ideas of any Confidential Information, including prototypes, hardware, software, or firmware.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.5&quot;, &quot;text&quot;: &quot;The Receiving Party shall use encrypted communications when transmitting Confidential Information electronically, use strong passwords and multi-factor authentication, and not store Confidential Information on unsecured personal devices or public cloud services without prior written consent.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.6&quot;, &quot;text&quot;: &quot;The Receiving Party shall promptly notify the Disclosing Party in writing of any actual or suspected unauthorized access, disclosure, or loss of Confidential Information.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;3.7&quot;, &quot;text&quot;: &quot;If the Receiving Party becomes legally compelled by judicial or administrative order, subpoena, or other legal process to disclose any Confidential Information, the Receiving Party shall: (i) provide the Disclosing Party with prompt written notice, to the extent legally permitted, so that the Disclosing Party may seek a protective order or other appropriate remedy; (ii) cooperate with the Disclosing Party in seeking such protective measures; and (iii) disclose only the minimum portion of Confidential Information that is legally required.&quot;}
+]</field>
+        </record>
+
+        <!-- 4. EXCLUSIONS FROM CONFIDENTIAL INFORMATION -->
+        <record id="nda_ws_section_04" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">40</field>
+            <field name="title_en">4. EXCLUSIONS FROM CONFIDENTIAL INFORMATION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;The obligations of confidentiality shall not apply to information that the Receiving Party can demonstrate by clear and convincing evidence:&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(a)&quot;, &quot;text&quot;: &quot;was already in the public domain at the time of disclosure through no fault of the Receiving Party;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(b)&quot;, &quot;text&quot;: &quot;becomes publicly available after disclosure through no fault of the Receiving Party;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(c)&quot;, &quot;text&quot;: &quot;was rightfully in the Receiving Party\u2019s possession prior to disclosure, as documented by contemporaneous written records;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(d)&quot;, &quot;text&quot;: &quot;is rightfully obtained from a third party without obligation of confidentiality;&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;(e)&quot;, &quot;text&quot;: &quot;is independently developed without reference to or use of the Confidential Information.&quot;}
+]</field>
+        </record>
+
+        <!-- 5. TERM AND TERMINATION -->
+        <record id="nda_ws_section_05" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">50</field>
+            <field name="title_en">5. TERM AND TERMINATION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;5.1&quot;, &quot;text&quot;: &quot;This Agreement shall commence on the Effective Date and shall remain in full force and effect for a period of five (5) years, unless earlier terminated.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;5.2&quot;, &quot;text&quot;: &quot;Either Party may terminate this Agreement by providing thirty (30) days\u2019 prior written notice.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;5.3&quot;, &quot;text&quot;: &quot;The obligations of confidentiality shall survive for a period of five (5) years following expiration or termination. With respect to Trade Secrets, the obligations shall survive for as long as such information remains a Trade Secret.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;5.4&quot;, &quot;text&quot;: &quot;Upon termination, the Receiving Party shall immediately cease all use of the Confidential Information and comply with the return obligations set forth in Section 6.&quot;}
+]</field>
+        </record>
+
+        <!-- 6. RETURN OF MATERIALS -->
+        <record id="nda_ws_section_06" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">60</field>
+            <field name="title_en">6. RETURN OF MATERIALS</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;6.1&quot;, &quot;text&quot;: &quot;Upon expiration, termination, or written request, the Receiving Party shall promptly return or destroy all Materials containing Confidential Information and provide written certification of destruction within fifteen (15) business days.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;6.2&quot;, &quot;text&quot;: &quot;For electronically stored Confidential Information, the Receiving Party shall employ secure deletion methods (multi-pass overwrite, degaussing, or physical destruction of storage media).&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;6.3&quot;, &quot;text&quot;: &quot;The Receiving Party may retain one archival copy solely for compliance with applicable law, provided it remains subject to all confidentiality obligations.&quot;}
+]</field>
+        </record>
+
+        <!-- 7. REMEDIES -->
+        <record id="nda_ws_section_07" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">70</field>
+            <field name="title_en">7. REMEDIES</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;callout&quot;, &quot;text&quot;: &quot;The Parties acknowledge that any breach may cause irreparable injury for which monetary damages would be inadequate. The Disclosing Party shall be entitled to seek immediate injunctive relief without the necessity of proving actual damages or posting a bond.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;7.1&quot;, &quot;text&quot;: &quot;The rights and remedies are cumulative and in addition to any other rights available at law or in equity, including claims for damages, an accounting of profits, and recovery of attorneys\u2019 fees.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;7.2&quot;, &quot;text&quot;: &quot;The Receiving Party shall indemnify and hold harmless the Disclosing Party from all claims, damages, losses, and expenses arising from any breach of this Agreement.&quot;}
+]</field>
+        </record>
+
+        <!-- 8. NON-SOLICITATION -->
+        <record id="nda_ws_section_08" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">80</field>
+            <field name="title_en">8. NON-SOLICITATION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;During the term and for two (2) years following termination, the Receiving Party shall not use Confidential Information to directly or indirectly solicit, recruit, or hire any employee, contractor, or key personnel of the Company, or to solicit or divert any client, customer, supplier, or business partner of the Company.&quot;}
+]</field>
+        </record>
+
+        <!-- 9. INTELLECTUAL PROPERTY -->
+        <record id="nda_ws_section_09" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">90</field>
+            <field name="title_en">9. INTELLECTUAL PROPERTY</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;9.1&quot;, &quot;text&quot;: &quot;Nothing in this Agreement grants the Receiving Party any right, title, or interest in the Confidential Information or any intellectual property of the Disclosing Party.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;9.2&quot;, &quot;text&quot;: &quot;Any inventions or work product created using the Company\u2019s Confidential Information shall be governed by the Consulting Agreement and shall be the sole property of the Company.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;9.3&quot;, &quot;text&quot;: &quot;ALL CONFIDENTIAL INFORMATION IS PROVIDED \u201cAS IS.\u201d NEITHER PARTY MAKES ANY WARRANTY WITH RESPECT TO THE ACCURACY, COMPLETENESS, OR FITNESS FOR A PARTICULAR PURPOSE OF ANY CONFIDENTIAL INFORMATION.&quot;}
+]</field>
+        </record>
+
+        <!-- 10. GOVERNING LAW AND JURISDICTION -->
+        <record id="nda_ws_section_10" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">100</field>
+            <field name="title_en">10. GOVERNING LAW AND JURISDICTION</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;10.1&quot;, &quot;text&quot;: &quot;This Agreement shall be governed by the laws of the State of Delaware, without regard to conflict of laws principles.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;10.2&quot;, &quot;text&quot;: &quot;The Parties submit to the exclusive jurisdiction of the courts of the State of Delaware. Each Party waives any objection to venue.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;10.3&quot;, &quot;text&quot;: &quot;In any action to enforce this Agreement, the prevailing Party shall be entitled to recover reasonable attorneys\u2019 fees and costs.&quot;}
+]</field>
+        </record>
+
+        <!-- 11. GENERAL PROVISIONS -->
+        <record id="nda_ws_section_11" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">110</field>
+            <field name="title_en">11. GENERAL PROVISIONS</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.1&quot;, &quot;text&quot;: &quot;All notices shall be in writing, delivered personally, by registered mail, or by recognized courier service to the addresses set forth herein.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.2&quot;, &quot;text&quot;: &quot;Neither Party may assign this Agreement without prior written consent, except that the Company may assign to a successor entity in connection with a merger or acquisition.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.3&quot;, &quot;text&quot;: &quot;No failure or delay in exercising any right shall operate as a waiver thereof.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.4&quot;, &quot;text&quot;: &quot;If any provision is held invalid, it shall be modified to the minimum extent necessary; the remaining provisions shall continue in full force.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.5&quot;, &quot;text&quot;: &quot;This Agreement may not be amended except by a written instrument signed by all Parties.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.6&quot;, &quot;text&quot;: &quot;The Receiving Party acknowledges that certain Confidential Information may be subject to ITAR and EAR export control regulations and agrees to comply with all applicable export control laws.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.7&quot;, &quot;text&quot;: &quot;No Party shall issue any public disclosure regarding this Agreement without the prior written consent of the other Parties.&quot;},
+    {&quot;type&quot;: &quot;bullet&quot;, &quot;label&quot;: &quot;11.8&quot;, &quot;text&quot;: &quot;This Agreement may be executed in counterparts, each of which shall be deemed an original and all of which together shall constitute one and the same instrument. Electronic signatures and PDF copies shall be deemed originals for all purposes.&quot;}
+]</field>
+        </record>
+
+        <!-- 12. ENTIRE AGREEMENT -->
+        <record id="nda_ws_section_12" model="ws.contract.template.section">
+            <field name="template_id" ref="nda_template_woodenshark"/>
+            <field name="sequence">120</field>
+            <field name="title_en">12. ENTIRE AGREEMENT</field>
+            <field name="content_en">[
+    {&quot;type&quot;: &quot;paragraph&quot;, &quot;text&quot;: &quot;This Agreement, together with the Consulting Agreement dated {effective_date}, constitutes the entire agreement between the Parties with respect to the subject matter hereof. In the event of any conflict regarding Confidential Information, the more restrictive provision shall prevail.&quot;}
+]</field>
+        </record>
+
+    </data>
+</odoo>

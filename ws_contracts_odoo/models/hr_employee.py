@@ -1,4 +1,6 @@
-from odoo import models, fields
+import logging
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -22,6 +24,31 @@ class HrEmployee(models.Model):
     )
     ws_agreement_date = fields.Date("Agreement Date")
     ws_effective_date = fields.Date("Effective Date")
+
+    # ── Document relations ──
+    ws_document_ids = fields.One2many(
+        "ws.contract.document", "employee_id",
+        string="Contract Documents",
+    )
+    ws_document_count = fields.Integer(
+        compute="_compute_ws_document_count", string="Documents",
+    )
+
+    @api.depends("ws_document_ids")
+    def _compute_ws_document_count(self):
+        for rec in self:
+            rec.ws_document_count = len(rec.ws_document_ids)
+
+    def action_view_contract_documents(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Contract Documents",
+            "res_model": "ws.contract.document",
+            "view_mode": "tree,form",
+            "domain": [("employee_id", "=", self.id)],
+            "context": {"default_employee_id": self.id},
+        }
 
     def action_generate_documents(self):
         """Open the document generation wizard."""

@@ -1,15 +1,16 @@
 {
-    "name": "WS Contracts — NDA & Consulting Agreement Generator",
-    "version": "18.0.1.0.0",
+    "name": "WS Contracts — Multi-Company Bilingual Contract System",
+    "version": "18.0.2.0.0",
     "category": "Human Resources",
-    "summary": "Generate NDA and Consulting Agreement PDFs from employee cards",
+    "summary": "Generate bilingual NDA and Contract PDFs with multi-company support and Odoo Sign integration",
     "description": """
-        Adds a "Generate Documents" button to the employee form.
-        Generates branded NDA and Consulting Agreement PDFs with:
-        - AES-256 encryption
-        - Watermarks
-        - Corporate branding (Woodenshark LLC)
-        - Auto-save to employee attachments
+        Multi-company bilingual contract management system:
+        - Contract templates with company branding
+        - Bilingual PDF generation (EN + local language)
+        - NDA, Consulting Agreement, and custom document types
+        - Odoo Sign integration for digital signatures
+        - AES-256 encrypted PDFs with watermarks
+        - Document lifecycle tracking (draft → signed → archived)
     """,
     "author": "Woodenshark LLC",
     "website": "https://woodenshark.com",
@@ -17,13 +18,18 @@
     "depends": ["hr"],
     "data": [
         "security/ir.model.access.csv",
+        "views/contract_template_views.xml",
+        "views/contract_document_views.xml",
         "views/generate_wizard_views.xml",
         "views/hr_employee_views.xml",
+        "data/nda_template_ws.xml",
+        "data/contract_template_ws.xml",
+        "data/cron.xml",
     ],
     "external_dependencies": {
         "python": ["fpdf2"],
     },
     "installable": True,
-    "application": False,
+    "application": True,
     "auto_install": False,
 }

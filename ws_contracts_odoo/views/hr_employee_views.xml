@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Extend hr.employee form: add button + Contract Details tab -->
+    <!-- Extend hr.employee form: add button + Contract Details tab + Documents tab -->
     <record id="view_employee_form_inherit_ws_contracts" model="ir.ui.view">
         <field name="name">hr.employee.form.ws.contracts</field>
         <field name="model">hr.employee</field>
@@ -15,6 +15,16 @@
                         type="object"
                         class="oe_highlight"
                         icon="fa-file-pdf-o"/>
+            </xpath>
+
+            <!-- Smart button: document count -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_contract_documents"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o">
+                    <field name="ws_document_count" widget="statinfo" string="Documents"/>
+                </button>
             </xpath>
 
             <!-- Contract Details tab -->
@@ -42,6 +52,22 @@
                             <field name="ws_effective_date"/>
                         </group>
                     </group>
+                </page>
+
+                <!-- Documents tab -->
+                <page string="Contracts &amp; Documents" name="ws_documents">
+                    <field name="ws_document_ids">
+                        <tree>
+                            <field name="template_id"/>
+                            <field name="doc_type"/>
+                            <field name="state" widget="badge"
+                                   decoration-info="state == 'draft'"
+                                   decoration-success="state == 'signed'"
+                                   decoration-warning="state == 'sent_for_sign'"/>
+                            <field name="generated_date"/>
+                            <field name="signed_date"/>
+                        </tree>
+                    </field>
                 </page>
             </xpath>
 

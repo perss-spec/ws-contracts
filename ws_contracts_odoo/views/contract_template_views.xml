@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══ Contract Template: Tree ═══ -->
+    <record id="ws_contract_template_tree" model="ir.ui.view">
+        <field name="name">ws.contract.template.tree</field>
+        <field name="model">ws.contract.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="doc_type"/>
+                <field name="local_lang"/>
+                <field name="active" column_invisible="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ═══ Contract Template: Form ═══ -->
+    <record id="ws_contract_template_form" model="ir.ui.view">
+        <field name="name">ws.contract.template.form</field>
+        <field name="model">ws.contract.template</field>
+        <field name="arch" type="xml">
+            <form string="Contract Template">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Template Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="General">
+                            <field name="company_id"/>
+                            <field name="doc_type"/>
+                            <field name="local_lang"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Document Settings">
+                            <field name="nda_term_years" invisible="doc_type != 'nda'"/>
+                            <field name="contract_end_date" invisible="doc_type == 'nda'"/>
+                            <field name="tax_rate" invisible="doc_type == 'nda'"/>
+                            <field name="termination_notice_days" invisible="doc_type == 'nda'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Branding" name="branding">
+                            <group>
+                                <group string="Colors">
+                                    <field name="primary_color"/>
+                                    <field name="accent_color"/>
+                                </group>
+                                <group string="Header &amp; Watermark">
+                                    <field name="watermark_text"/>
+                                    <field name="classification_label"/>
+                                    <field name="header_label"/>
+                                    <field name="doc_subtitle"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Signatory">
+                                    <field name="signatory_name"/>
+                                    <field name="signatory_title"/>
+                                    <field name="signatory_email"/>
+                                </group>
+                                <group string="Company Address">
+                                    <field name="company_address"/>
+                                    <field name="company_address_flat"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Bank Details">
+                                    <field name="bank_swift"/>
+                                    <field name="bank_account"/>
+                                    <field name="bank_name"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Sections" name="sections">
+                            <field name="section_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="title_en"/>
+                                    <field name="title_local"/>
+                                    <field name="style"/>
+                                    <field name="content_en" widget="text" optional="hide"/>
+                                    <field name="content_local" widget="text" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══ Contract Template: Search ═══ -->
+    <record id="ws_contract_template_search" model="ir.ui.view">
+        <field name="name">ws.contract.template.search</field>
+        <field name="model">ws.contract.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="doc_type"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_type" string="Document Type" context="{'group_by': 'doc_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══ Contract Template: Action ═══ -->
+    <record id="ws_contract_template_action" model="ir.actions.act_window">
+        <field name="name">Contract Templates</field>
+        <field name="res_model">ws.contract.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="ws_contract_template_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+    <!-- ═══ Menu Items ═══ -->
+    <menuitem id="ws_contracts_menu_root"
+              name="WS Contracts"
+              web_icon="ws_contracts_odoo,static/description/icon.png"
+              sequence="90"/>
+
+    <menuitem id="ws_contracts_menu_config"
+              name="Configuration"
+              parent="ws_contracts_menu_root"
+              sequence="50"/>
+
+    <menuitem id="ws_contracts_menu_templates"
+              name="Contract Templates"
+              parent="ws_contracts_menu_config"
+              action="ws_contract_template_action"
+              sequence="10"/>
+
+</odoo>

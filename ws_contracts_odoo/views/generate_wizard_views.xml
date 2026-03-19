@@ -11,7 +11,18 @@
                 <group invisible="state != 'choose'">
                     <group>
                         <field name="employee_id" readonly="1"/>
+                        <field name="use_template"/>
+                    </group>
+                    <!-- Legacy mode -->
+                    <group invisible="use_template">
                         <field name="doc_type"/>
+                    </group>
+                    <!-- Template mode -->
+                    <group invisible="not use_template">
+                        <field name="employee_company_id" invisible="1"/>
+                        <field name="template_id"
+                               required="use_template"
+                               domain="[('company_id', '=', employee_company_id), ('active', '=', True)]"/>
                     </group>
                 </group>
 
