@@ -27,7 +27,7 @@ class OdooSettings(BaseSettings):
     odoo_user: str = ""
     odoo_password: str = ""
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
 class PdfSettings(BaseSettings):
@@ -35,4 +35,4 @@ class PdfSettings(BaseSettings):
     pdf_watermark_text: str = "WOODENSHARK LLC CONFIDENTIAL"
     fonts_dir: Path = _find_fonts_dir()
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
