@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Smart Contract Wizard Form -->
+    <record id="view_smart_contract_wizard_form" model="ir.ui.view">
+        <field name="name">ws.contract.smart.wizard.form</field>
+        <field name="model">ws.contract.smart.wizard</field>
+        <field name="arch" type="xml">
+            <form string="New Contract">
+
+                <!-- Step indicator -->
+                <div class="text-center mb-3">
+                    <span class="badge rounded-pill"
+                          invisible="state != 'step1_category'"
+                          style="background-color: #875A7B; color: white; font-size: 14px;">
+                        Step 1/4 — Contract Type
+                    </span>
+                    <span class="badge rounded-pill"
+                          invisible="state != 'step2_conditions'"
+                          style="background-color: #875A7B; color: white; font-size: 14px;">
+                        Step 2/4 — Conditions
+                    </span>
+                    <span class="badge rounded-pill"
+                          invisible="state != 'step3_details'"
+                          style="background-color: #875A7B; color: white; font-size: 14px;">
+                        Step 3/4 — Contract Details
+                    </span>
+                    <span class="badge rounded-pill"
+                          invisible="state != 'step4_done'"
+                          style="background-color: #21B799; color: white; font-size: 14px;">
+                        Step 4/4 — Done!
+                    </span>
+                </div>
+
+                <field name="state" invisible="1"/>
+                <field name="employee_company_id" invisible="1"/>
+                <field name="resolved_doc_type" invisible="1"/>
+                <field name="has_existing_nda" invisible="1"/>
+
+                <!-- ═══════════════════════════════════ -->
+                <!-- STEP 1: Category Selection          -->
+                <!-- ═══════════════════════════════════ -->
+                <group invisible="state != 'step1_category'">
+                    <group string="Employee">
+                        <field name="employee_id" readonly="1"/>
+                    </group>
+                    <group string="What type of contract?">
+                        <field name="contract_category" widget="radio"/>
+                    </group>
+                </group>
+
+                <!-- ═══════════════════════════════════ -->
+                <!-- STEP 2: Conditions                  -->
+                <!-- ═══════════════════════════════════ -->
+                <group invisible="state != 'step2_conditions'">
+
+                    <!-- Employment PL conditions -->
+                    <group string="Employment Conditions"
+                           invisible="contract_category != 'employment_pl'">
+                        <field name="needs_probation"/>
+                        <field name="followup_duration"
+                               invisible="not needs_probation"/>
+                        <field name="needs_extended_probation"
+                               invisible="followup_duration != '6to12'"/>
+                        <field name="has_end_date"
+                               invisible="needs_probation"/>
+                    </group>
+
+                    <!-- Non-employment: no extra conditions -->
+                    <group string="Contract Type"
+                           invisible="contract_category == 'employment_pl'">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Template auto-selected</strong> based on category.
+                            No additional conditions needed.
+                        </div>
+                    </group>
+
+                    <!-- Resolved template preview -->
+                    <group string="Matched Template">
+                        <field name="resolved_template_id"/>
+                        <field name="template_override_id"
+                               string="Use different template instead"/>
+                    </group>
+
+                    <!-- NDA section -->
+                    <group string="NDA (Non-Disclosure Agreement)">
+                        <div class="alert alert-success" role="alert"
+                             invisible="not has_existing_nda">
+                            <i class="fa fa-check-circle"/> Employee already has an active NDA.
+                        </div>
+                        <field name="include_nda"
+                               invisible="has_existing_nda"/>
+                        <field name="nda_template_id" readonly="1"
+                               invisible="not include_nda or has_existing_nda"/>
+                    </group>
+                </group>
+
+                <!-- ═══════════════════════════════════ -->
+                <!-- STEP 3: Contract Details            -->
+                <!-- ═══════════════════════════════════ -->
+                <group invisible="state != 'step3_details'">
+                    <group string="Dates">
+                        <field name="signing_date"/>
+                        <field name="contract_start_date"/>
+                        <field name="contract_end_date"
+                               invisible="resolved_doc_type == 'czas_nieokreslony'"/>
+                    </group>
+
+                    <!-- Job details (PL employment types) -->
+                    <group string="Job Details"
+                           invisible="resolved_doc_type not in ('probna_1m','probna_2m','probna_3m','probna_2plus1','czas_okreslony','czas_nieokreslony')">
+                        <field name="job_title_pl"/>
+                        <field name="job_title_en"/>
+                        <field name="place_of_work"/>
+                        <field name="working_time_pl"/>
+                        <field name="working_time_en"/>
+                    </group>
+
+                    <!-- Salary -->
+                    <group string="Compensation"
+                           invisible="resolved_doc_type not in ('probna_1m','probna_2m','probna_3m','probna_2plus1','czas_okreslony','czas_nieokreslony','zlecenie')">
+                        <field name="salary_gross"
+                               invisible="resolved_doc_type == 'zlecenie'"/>
+                        <field name="hourly_rate_gross"
+                               invisible="resolved_doc_type != 'zlecenie'"/>
+                    </group>
+
+                    <!-- Zlecenie-specific -->
+                    <group string="Scope of Work"
+                           invisible="resolved_doc_type != 'zlecenie'">
+                        <field name="scope_of_work_pl"/>
+                        <field name="scope_of_work_en"/>
+                        <field name="id_document_pl"/>
+                        <field name="id_document_en"/>
+                    </group>
+
+                    <!-- Probna 2+1 justification -->
+                    <group string="Extension Justification"
+                           invisible="resolved_doc_type != 'probna_2plus1'">
+                        <field name="justification_pl"/>
+                        <field name="justification_en"/>
+                    </group>
+                </group>
+
+                <!-- ═══════════════════════════════════ -->
+                <!-- STEP 4: Done                        -->
+                <!-- ═══════════════════════════════════ -->
+                <group invisible="state != 'step4_done'">
+                    <div class="alert alert-success text-center" role="alert">
+                        <h4><i class="fa fa-check-circle"/> Documents Created Successfully!</h4>
+                    </div>
+                    <field name="created_document_ids" readonly="1">
+                        <list>
+                            <field name="template_id"/>
+                            <field name="doc_type"/>
+                            <field name="state" widget="badge"
+                                   decoration-info="state == 'draft'"
+                                   decoration-success="state == 'generated'"/>
+                            <field name="generated_date"/>
+                        </list>
+                    </field>
+                </group>
+
+                <!-- ═══════════════════════════════════ -->
+                <!-- Footer                              -->
+                <!-- ═══════════════════════════════════ -->
+                <footer>
+                    <button string="Back" name="action_prev" type="object"
+                            class="btn-secondary"
+                            invisible="state in ('step1_category', 'step4_done')"
+                            icon="fa-arrow-left"/>
+
+                    <button string="Next" name="action_next" type="object"
+                            class="btn-primary"
+                            invisible="state not in ('step1_category', 'step2_conditions')"
+                            icon="fa-arrow-right"/>
+
+                    <button string="Generate" name="action_next" type="object"
+                            class="btn-primary"
+                            invisible="state != 'step3_details'"
+                            icon="fa-magic"/>
+
+                    <button string="Open Documents" name="action_open_documents" type="object"
+                            class="btn-primary"
+                            invisible="state != 'step4_done'"
+                            icon="fa-folder-open"/>
+
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_smart_contract_wizard" model="ir.actions.act_window">
+        <field name="name">New Contract</field>
+        <field name="res_model">ws.contract.smart.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

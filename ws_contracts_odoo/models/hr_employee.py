@@ -78,12 +78,24 @@ class HrEmployee(models.Model):
         }
 
     def action_generate_documents(self):
-        """Open the document generation wizard."""
+        """Open the document generation wizard (legacy)."""
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
             "name": "Generate Documents",
             "res_model": "ws.generate.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_employee_id": self.id},
+        }
+
+    def action_smart_generate_documents(self):
+        """Open the smart contract wizard."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "New Contract",
+            "res_model": "ws.contract.smart.wizard",
             "view_mode": "form",
             "target": "new",
             "context": {"default_employee_id": self.id},
