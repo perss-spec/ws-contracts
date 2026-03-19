@@ -24,7 +24,6 @@
         "views/contract_template_views.xml",
         "views/contract_document_views.xml",
         "views/server_actions.xml",
-        "views/generate_wizard_views.xml",
         "views/smart_wizard_views.xml",
         "views/hr_employee_views.xml",
         "data/nda_template_ws.xml",

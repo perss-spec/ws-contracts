@@ -15,10 +15,6 @@
                         type="object"
                         class="oe_highlight"
                         icon="fa-magic"/>
-                <button name="action_generate_documents"
-                        string="Generate Documents"
-                        type="object"
-                        icon="fa-file-pdf-o"/>
             </xpath>
 
             <!-- Smart button: document count -->

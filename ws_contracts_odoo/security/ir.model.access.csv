@@ -1,5 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ws_generate_wizard,ws.generate.wizard,model_ws_generate_wizard,hr.group_hr_user,1,1,1,1
 access_ws_smart_wizard,ws.contract.smart.wizard,model_ws_contract_smart_wizard,hr.group_hr_user,1,1,1,1
 access_ws_contract_template_user,ws.contract.template user,model_ws_contract_template,hr.group_hr_user,1,0,0,0
 access_ws_contract_template_manager,ws.contract.template manager,model_ws_contract_template,hr.group_hr_manager,1,1,1,1

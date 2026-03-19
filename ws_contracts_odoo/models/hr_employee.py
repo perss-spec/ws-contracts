@@ -77,18 +77,6 @@ class HrEmployee(models.Model):
             "context": {"default_employee_id": self.id},
         }
 
-    def action_generate_documents(self):
-        """Open the document generation wizard (legacy)."""
-        self.ensure_one()
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Generate Documents",
-            "res_model": "ws.generate.wizard",
-            "view_mode": "form",
-            "target": "new",
-            "context": {"default_employee_id": self.id},
-        }
-
     def action_smart_generate_documents(self):
         """Open the smart contract wizard."""
         self.ensure_one()
