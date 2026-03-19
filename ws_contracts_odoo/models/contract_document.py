@@ -186,7 +186,7 @@ class ContractDocument(models.Model):
         })
 
         sig_type = self.env.ref("sign.sign_item_type_signature", raise_if_not_found=False)
-        role_company = self.env.ref("sign.sign_item_role_company_1", raise_if_not_found=False)
+        role_company = self.env.ref("sign.sign_item_role_user", raise_if_not_found=False)
         role_customer = self.env.ref("sign.sign_item_role_customer", raise_if_not_found=False)
 
         if not sig_type or not role_company or not role_customer:
@@ -216,7 +216,7 @@ class ContractDocument(models.Model):
         template = self.template_id
         emp = self.employee_id
 
-        role_company = self.env.ref("sign.sign_item_role_company_1")
+        role_company = self.env.ref("sign.sign_item_role_user")
         role_customer = self.env.ref("sign.sign_item_role_customer")
 
         # Company signatory
