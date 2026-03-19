@@ -57,7 +57,7 @@ class HrEmployee(models.Model):
             "type": "ir.actions.act_window",
             "name": "Contract Documents",
             "res_model": "ws.contract.document",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("employee_id", "=", self.id)],
             "context": {"default_employee_id": self.id},
         }
@@ -68,7 +68,7 @@ class HrEmployee(models.Model):
             "type": "ir.actions.act_window",
             "name": "Pending Signature",
             "res_model": "ws.contract.document",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [
                 ("employee_id", "=", self.id),
                 ("state", "in", ("generated", "sent_for_sign")),

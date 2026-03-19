@@ -48,7 +48,7 @@
         <field name="name">ws.contract.document.tree</field>
         <field name="model">ws.contract.document</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="state == 'generated'">
+            <list decoration-danger="state == 'generated'">
                 <field name="employee_id"/>
                 <field name="template_id"/>
                 <field name="doc_type"/>
@@ -61,7 +61,7 @@
                 <field name="generated_date"/>
                 <field name="signed_date"/>
                 <field name="company_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -140,7 +140,7 @@
     <record id="ws_contract_document_action" model="ir.actions.act_window">
         <field name="name">Contract Documents</field>
         <field name="res_model">ws.contract.document</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="ws_contract_document_search"/>
         <field name="context">{'search_default_not_archived': 1}</field>
     </record>

@@ -70,7 +70,7 @@
                 <!-- Documents tab -->
                 <page string="Contracts &amp; Documents" name="ws_documents">
                     <field name="ws_document_ids">
-                        <tree decoration-danger="state == 'generated'">
+                        <list decoration-danger="state == 'generated'">
                             <field name="template_id"/>
                             <field name="doc_type"/>
                             <field name="state" widget="badge"
@@ -80,7 +80,7 @@
                                    decoration-danger="state == 'generated'"/>
                             <field name="generated_date"/>
                             <field name="signed_date"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>

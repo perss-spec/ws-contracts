@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ═══ Contract Template: Tree ═══ -->
+    <!-- ═══ Contract Template: List ═══ -->
     <record id="ws_contract_template_tree" model="ir.ui.view">
-        <field name="name">ws.contract.template.tree</field>
+        <field name="name">ws.contract.template.list</field>
         <field name="model">ws.contract.template</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="company_id"/>
                 <field name="doc_type" widget="badge"/>
                 <field name="local_lang"/>
                 <field name="primary_color" widget="color"/>
                 <field name="active" column_invisible="True"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -76,14 +76,14 @@
                         </page>
                         <page string="Sections" name="sections">
                             <field name="section_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="title_en"/>
                                     <field name="title_local"/>
                                     <field name="style"/>
                                     <field name="content_en" widget="text" optional="hide"/>
                                     <field name="content_local" widget="text" optional="hide"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -115,7 +115,7 @@
     <record id="ws_contract_template_action" model="ir.actions.act_window">
         <field name="name">Contract Templates</field>
         <field name="res_model">ws.contract.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="ws_contract_template_search"/>
         <field name="context">{'search_default_active': 1}</field>
     </record>

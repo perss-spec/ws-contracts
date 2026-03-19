@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ws-contracts v2 — Plan</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --cyan: #39d2c0;
+    --pink: #f778ba;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle { color: var(--text2); margin-bottom: 2rem; font-size: 1.1rem; }
+  h2 {
+    font-size: 1.4rem;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+  }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: var(--cyan); }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-title { font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .card-title .icon { font-size: 1.3rem; }
+  .card p, .card li { color: var(--text2); font-size: 0.9rem; }
+  .card ul { padding-left: 1.2rem; }
+  .card li { margin: 0.2rem 0; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th {
+    background: var(--surface2);
+    text-align: left;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  tr:hover td { background: var(--surface2); }
+  .mono { font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.85rem; }
+  .tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .tag-green { background: #0d3321; color: var(--green); }
+  .tag-orange { background: #3d2e00; color: var(--orange); }
+  .tag-red { background: #3d1418; color: var(--red); }
+  .tag-blue { background: #0c2d6b; color: var(--accent); }
+  .tag-purple { background: #271052; color: var(--purple); }
+  .tag-cyan { background: #0a2e2a; color: var(--cyan); }
+  .tag-pink { background: #3d1535; color: var(--pink); }
+
+  /* ERD */
+  .erd { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+  @media (max-width: 900px) { .erd { grid-template-columns: 1fr; } }
+  .entity {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .entity-header {
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-bottom: 2px solid;
+  }
+  .entity-fields { padding: 0.5rem 0; }
+  .entity-fields .field {
+    padding: 0.25rem 1rem;
+    font-size: 0.85rem;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .field:hover { background: var(--surface2); }
+  .field-name { color: var(--text); }
+  .field-type { color: var(--text2); font-size: 0.8rem; }
+  .field-pk { color: var(--orange); }
+  .field-fk { color: var(--cyan); }
+  .field-rel { color: var(--purple); font-size: 0.75rem; }
+
+  /* Arrow connectors (simplified) */
+  .relations {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .rel-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-family: monospace;
+  }
+  .rel-arrow { color: var(--orange); font-weight: bold; min-width: 2rem; text-align: center; }
+  .rel-entity { color: var(--cyan); font-weight: 600; }
+  .rel-type { color: var(--text2); font-size: 0.8rem; }
+
+  /* PDF mockup */
+  .pdf-mock {
+    background: #fff;
+    color: #333;
+    border-radius: 4px;
+    padding: 0;
+    max-width: 500px;
+    margin: 1rem auto;
+    font-family: 'Cambria', Georgia, serif;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+  .pdf-bar { height: 8px; }
+  .pdf-content { padding: 1.2rem 1.5rem; }
+  .pdf-heading-en { font-weight: 700; font-size: 1rem; margin: 0.8rem 0 0.2rem; }
+  .pdf-heading-local { font-style: italic; font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+  .pdf-body-en { font-size: 0.85rem; color: #333; margin-bottom: 0.3rem; }
+  .pdf-body-local { font-style: italic; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; }
+  .pdf-sep { border-top: 1px solid #ccc; margin: 0.8rem 0; }
+  .pdf-watermark {
+    position: absolute;
+    transform: rotate(-35deg);
+    font-size: 2rem;
+    color: rgba(0,0,0,0.04);
+    font-weight: bold;
+    pointer-events: none;
+  }
+
+  /* Phase timeline */
+  .timeline { position: relative; padding-left: 2rem; margin: 1rem 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.7rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .phase {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+  }
+  .phase::before {
+    content: '';
+    position: absolute;
+    left: -1.6rem;
+    top: 0.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+  }
+  .phase.done::before { background: var(--green); border-color: var(--green); }
+  .phase.current::before { background: var(--orange); border-color: var(--orange); }
+  .phase.todo::before { background: transparent; border-color: var(--text2); }
+  .phase-title { font-weight: 600; font-size: 1rem; }
+  .phase-desc { color: var(--text2); font-size: 0.9rem; margin-top: 0.3rem; }
+  .phase-files { font-family: monospace; font-size: 0.8rem; color: var(--purple); margin-top: 0.3rem; }
+
+  /* File tree */
+  .tree { font-family: 'Cascadia Code', monospace; font-size: 0.85rem; line-height: 1.8; padding: 1rem; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+  .tree .new { color: var(--green); }
+  .tree .mod { color: var(--orange); }
+  .tree .old { color: var(--text2); }
+  .tree .dir { color: var(--accent); font-weight: 600; }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-step {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .flow-arrow { font-size: 1.2rem; color: var(--text2); padding: 0 0.3rem; }
+  .flow-draft { background: #1c2333; color: var(--text2); border: 1px solid var(--border); }
+  .flow-generated { background: #0c2d6b; color: var(--accent); }
+  .flow-sent { background: #3d2e00; color: var(--orange); }
+  .flow-signed { background: #0d3321; color: var(--green); }
+  .flow-archived { background: #1c2333; color: var(--text2); }
+
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0; font-size: 0.85rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<h1>ws-contracts v2</h1>
+<p class="subtitle">Multi-Company Bilingual Contract System &mdash; Woodenshark / OMD Systems</p>
+
+<!-- ════════════════ PROBLEM ════════════════ -->
+<h2>Было &rarr; Стало</h2>
+<div class="cards">
+  <div class="card" style="border-left: 3px solid var(--red);">
+    <div class="card-title"><span class="icon">&#10060;</span> v1 &mdash; Было</div>
+    <ul>
+      <li>1 компания (Woodenshark LLC) захардкожена</li>
+      <li>Цвета, адреса, тексты &mdash; константы в коде</li>
+      <li>Только английский</li>
+      <li>Нет шаблонов &mdash; NDA + Contract зашиты</li>
+      <li>Нет lifecycle документов</li>
+      <li>Нет цифровой подписи</li>
+    </ul>
+  </div>
+  <div class="card" style="border-left: 3px solid var(--green);">
+    <div class="card-title"><span class="icon">&#9989;</span> v2 &mdash; Стало</div>
+    <ul>
+      <li>9 компаний, 4 юрисдикции (US, PL, UK, UA)</li>
+      <li>Параметризованные шаблоны с брендингом</li>
+      <li>Билингвальный PDF (EN + PL / UK)</li>
+      <li>Любые типы контрактов через секции</li>
+      <li>Lifecycle: draft &rarr; generated &rarr; signed &rarr; archived</li>
+      <li>Odoo Sign &mdash; цифровая подпись</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════ COMPANIES ════════════════ -->
+<h2>Компании и юрисдикции</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Компания</th>
+      <th>Юрисдикция</th>
+      <th>Язык PDF</th>
+      <th>Типы документов</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Woodenshark LLC</strong></td>
+      <td><span class="tag tag-blue">US / Delaware</span></td>
+      <td>EN only</td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-blue">Consulting Agreement</span></td>
+    </tr>
+    <tr>
+      <td>OM Digital Solutions sp. z o.o.</td>
+      <td><span class="tag tag-purple">PL</span></td>
+      <td>EN + <strong>PL</strong></td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-purple">Umowa o prac&#281;</span> <span class="tag tag-cyan">Umowa B2B</span></td>
+    </tr>
+    <tr>
+      <td>OMD Systems sp. z o.o.</td>
+      <td><span class="tag tag-purple">PL</span></td>
+      <td>EN + <strong>PL</strong></td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-blue">Consulting Agreement</span></td>
+    </tr>
+    <tr>
+      <td>OM Poland sp. z o.o.</td>
+      <td><span class="tag tag-purple">PL</span></td>
+      <td>EN + <strong>PL</strong></td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-blue">Consulting Agreement</span></td>
+    </tr>
+    <tr>
+      <td>OMD Systems Ltd</td>
+      <td><span class="tag tag-green">UK</span></td>
+      <td>EN only</td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-blue">Consulting Agreement</span></td>
+    </tr>
+    <tr>
+      <td>OMD Systems Ukraine</td>
+      <td><span class="tag tag-orange">UA</span></td>
+      <td>EN + <strong>UK</strong></td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-cyan">&#1044;&#1086;&#1075;&#1086;&#1074;&#1110;&#1088; &#1087;&#1110;&#1076;&#1088;&#1103;&#1076;&#1091;</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ════════════════ ERD ════════════════ -->
+<h2>&#128450; Сущности (ERD)</h2>
+<div class="erd">
+
+  <!-- ws.contract.template -->
+  <div class="entity">
+    <div class="entity-header" style="background: #0c2d6b; border-color: var(--accent);">
+      ws.contract.template
+    </div>
+    <div class="entity-fields">
+      <div class="field"><span class="field-pk">id</span> <span class="field-type">int PK</span></div>
+      <div class="field"><span class="field-fk">company_id</span> <span class="field-type">FK &rarr; res.company</span></div>
+      <div class="field"><span class="field-name">name</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">doc_type</span> <span class="field-type">nda | contract | nca | ...</span></div>
+      <div class="field"><span class="field-name">local_lang</span> <span class="field-type">none | pl | uk</span></div>
+      <div class="field"><span class="field-name">primary_color</span> <span class="field-type">char &quot;#8B0000&quot;</span></div>
+      <div class="field"><span class="field-name">accent_color</span> <span class="field-type">char &quot;#D4AF37&quot;</span></div>
+      <div class="field"><span class="field-name">watermark_text</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">signatory_name / title / email</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">company_address</span> <span class="field-type">text</span></div>
+      <div class="field"><span class="field-name">nda_term_years</span> <span class="field-type">int (5)</span></div>
+      <div class="field"><span class="field-name">contract_end_date</span> <span class="field-type">date</span></div>
+      <div class="field"><span class="field-name">tax_rate</span> <span class="field-type">float (0.06)</span></div>
+      <div class="field"><span class="field-name">bank_swift / account / name</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-rel">&#x25BC; section_ids &rarr; One2many</span></div>
+    </div>
+  </div>
+
+  <!-- ws.contract.template.section -->
+  <div class="entity">
+    <div class="entity-header" style="background: #271052; border-color: var(--purple);">
+      ws.contract.template.section
+    </div>
+    <div class="entity-fields">
+      <div class="field"><span class="field-pk">id</span> <span class="field-type">int PK</span></div>
+      <div class="field"><span class="field-fk">template_id</span> <span class="field-type">FK &rarr; ws.contract.template</span></div>
+      <div class="field"><span class="field-name">sequence</span> <span class="field-type">int (10, 20, 30...)</span></div>
+      <div class="field"><span class="field-name">title_en</span> <span class="field-type">char &quot;1. DEFINITIONS&quot;</span></div>
+      <div class="field"><span class="field-name">title_local</span> <span class="field-type">char &quot;1. &#1042;&#1048;&#1047;&#1053;&#1040;&#1063;&#1045;&#1053;&#1053;&#1071;&quot;</span></div>
+      <div class="field"><span class="field-name">content_en</span> <span class="field-type">JSON [{type, text}]</span></div>
+      <div class="field"><span class="field-name">content_local</span> <span class="field-type">JSON [{type, text}]</span></div>
+      <div class="field"><span class="field-name">style</span> <span class="field-type">normal | callout | notice</span></div>
+    </div>
+  </div>
+
+  <!-- ws.contract.document -->
+  <div class="entity">
+    <div class="entity-header" style="background: #0d3321; border-color: var(--green);">
+      ws.contract.document
+    </div>
+    <div class="entity-fields">
+      <div class="field"><span class="field-pk">id</span> <span class="field-type">int PK</span></div>
+      <div class="field"><span class="field-fk">employee_id</span> <span class="field-type">FK &rarr; hr.employee</span></div>
+      <div class="field"><span class="field-fk">template_id</span> <span class="field-type">FK &rarr; ws.contract.template</span></div>
+      <div class="field"><span class="field-name">state</span> <span class="field-type">draft | generated | sent | signed | archived</span></div>
+      <div class="field"><span class="field-fk">pdf_attachment_id</span> <span class="field-type">FK &rarr; ir.attachment</span></div>
+      <div class="field"><span class="field-fk">sign_request_id</span> <span class="field-type">FK &rarr; sign.request</span></div>
+      <div class="field"><span class="field-name">generated_date</span> <span class="field-type">datetime</span></div>
+      <div class="field"><span class="field-name">signed_date</span> <span class="field-type">datetime</span></div>
+    </div>
+  </div>
+
+  <!-- hr.employee (extension) -->
+  <div class="entity">
+    <div class="entity-header" style="background: #3d2e00; border-color: var(--orange);">
+      hr.employee <span style="font-weight:400; font-size:0.8rem;">(inherit)</span>
+    </div>
+    <div class="entity-fields">
+      <div class="field"><span class="field-name">ws_full_name_lat</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">ws_passport_number</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">ws_passport_issued / expires</span> <span class="field-type">date</span></div>
+      <div class="field"><span class="field-name">ws_address_full</span> <span class="field-type">text</span></div>
+      <div class="field"><span class="field-name">ws_iban / ws_swift</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">ws_receiver_name</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">ws_rate_usd</span> <span class="field-type">float</span></div>
+      <div class="field"><span class="field-name">ws_service_description</span> <span class="field-type">char</span></div>
+      <div class="field"><span class="field-name">ws_agreement_date / effective_date</span> <span class="field-type">date</span></div>
+      <div class="field"><span class="field-rel">&#x25BC; ws_document_ids &rarr; One2many</span></div>
+      <div class="field"><span class="field-rel">ws_document_count &rarr; computed</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Relations -->
+<h3>Связи</h3>
+<div class="relations">
+  <div class="rel-row"><span class="rel-entity">res.company</span> <span class="rel-arrow">1 &rarr; N</span> <span class="rel-entity">ws.contract.template</span> <span class="rel-type">(company_id)</span></div>
+  <div class="rel-row"><span class="rel-entity">ws.contract.template</span> <span class="rel-arrow">1 &rarr; N</span> <span class="rel-entity">ws.contract.template.section</span> <span class="rel-type">(template_id)</span></div>
+  <div class="rel-row"><span class="rel-entity">hr.employee</span> <span class="rel-arrow">1 &rarr; N</span> <span class="rel-entity">ws.contract.document</span> <span class="rel-type">(employee_id)</span></div>
+  <div class="rel-row"><span class="rel-entity">ws.contract.template</span> <span class="rel-arrow">1 &rarr; N</span> <span class="rel-entity">ws.contract.document</span> <span class="rel-type">(template_id)</span></div>
+  <div class="rel-row"><span class="rel-entity">ws.contract.document</span> <span class="rel-arrow">&rarr;</span> <span class="rel-entity">ir.attachment</span> <span class="rel-type">(pdf_attachment_id)</span></div>
+  <div class="rel-row"><span class="rel-entity">ws.contract.document</span> <span class="rel-arrow">&rarr;</span> <span class="rel-entity">sign.request</span> <span class="rel-type">(sign_request_id) &mdash; Odoo Sign</span></div>
+</div>
+
+<!-- ════════════════ DOCUMENT FLOW ════════════════ -->
+<h2>&#128260; Lifecycle документа</h2>
+<div class="flow">
+  <div class="flow-step flow-draft">&#9898; Draft</div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-step flow-generated">&#128196; Generated</div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-step flow-sent">&#9993; Sent for Sign</div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-step flow-signed">&#9989; Signed</div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-step flow-archived">&#128451; Archived</div>
+</div>
+<div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+  <div class="card">
+    <div class="card-title">Draft</div>
+    <p>&#1057;&#1086;&#1079;&#1076;&#1072;&#1085;&#1072; &#1079;&#1072;&#1087;&#1080;&#1089;&#1100;: &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082; + &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;. PDF &#1077;&#1097;&#1105; &#1085;&#1077; &#1089;&#1075;&#1077;&#1085;&#1077;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Generated</div>
+    <p>PDF &#1089;&#1086;&#1079;&#1076;&#1072;&#1085; &#1080; &#1089;&#1086;&#1093;&#1088;&#1072;&#1085;&#1105;&#1085; &#1074; ir.attachment. &#1052;&#1086;&#1078;&#1085;&#1086; &#1089;&#1082;&#1072;&#1095;&#1072;&#1090;&#1100;.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Sent for Sign</div>
+    <p>&#1054;&#1090;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085; &#1095;&#1077;&#1088;&#1077;&#1079; Odoo Sign. &#1046;&#1076;&#1105;&#1084; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100; &#1086;&#1073;&#1077;&#1080;&#1093; &#1089;&#1090;&#1086;&#1088;&#1086;&#1085;.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Signed</div>
+    <p>&#1054;&#1073;&#1077; &#1089;&#1090;&#1086;&#1088;&#1086;&#1085;&#1099; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1083;&#1080;. Cron &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1103;&#1077;&#1090; &#1082;&#1072;&#1078;&#1076;&#1099;&#1081; &#1095;&#1072;&#1089;.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Archived</div>
+    <p>&#1044;&#1086;&#1082;&#1091;&#1084;&#1077;&#1085;&#1090; &#1074; &#1072;&#1088;&#1093;&#1080;&#1074;&#1077;. &#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1077;&#1085; &#1076;&#1083;&#1103; &#1095;&#1090;&#1077;&#1085;&#1080;&#1103;.</p>
+  </div>
+</div>
+
+<!-- ════════════════ PDF MOCKUP ════════════════ -->
+<h2>&#128196; Билингвальный PDF &mdash; макет</h2>
+<div class="pdf-mock" style="position: relative;">
+  <div class="pdf-bar" style="background: linear-gradient(90deg, #8B0000, #C62828);"></div>
+  <div class="pdf-content">
+    <div class="pdf-heading-en" style="color: #8B0000;">SECTION 3. CONFIDENTIAL INFORMATION</div>
+    <div class="pdf-heading-local">3. &#1030;&#1053;&#1060;&#1054;&#1056;&#1052;&#1040;&#1062;&#1030;&#1071; &#1050;&#1054;&#1053;&#1060;&#1030;&#1044;&#1045;&#1053;&#1062;&#1030;&#1049;&#1053;&#1054;&#1043;&#1054; &#1061;&#1040;&#1056;&#1040;&#1050;&#1058;&#1045;&#1056;&#1059;</div>
+    <div class="pdf-body-en">The Receiving Party agrees to hold and maintain all Confidential Information in strict confidence for the sole benefit of the Disclosing Party.</div>
+    <div class="pdf-body-local">&#1057;&#1090;&#1086;&#1088;&#1086;&#1085;&#1072;-&#1086;&#1090;&#1088;&#1080;&#1084;&#1091;&#1074;&#1072;&#1095; &#1079;&#1086;&#1073;&#1086;&#1074;&#8217;&#1103;&#1079;&#1091;&#1108;&#1090;&#1100;&#1089;&#1103; &#1079;&#1073;&#1077;&#1088;&#1110;&#1075;&#1072;&#1090;&#1080; &#1082;&#1086;&#1085;&#1092;&#1110;&#1076;&#1077;&#1085;&#1094;&#1110;&#1081;&#1085;&#1091; &#1110;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1110;&#1102; &#1074;&#1080;&#1082;&#1083;&#1102;&#1095;&#1085;&#1086; &#1074; &#1110;&#1085;&#1090;&#1077;&#1088;&#1077;&#1089;&#1072;&#1093; &#1057;&#1090;&#1086;&#1088;&#1086;&#1085;&#1080;, &#1097;&#1086; &#1088;&#1086;&#1079;&#1082;&#1088;&#1080;&#1074;&#1072;&#1108;.</div>
+    <div class="pdf-sep"></div>
+    <div class="pdf-heading-en" style="color: #8B0000;">SECTION 4. OBLIGATIONS</div>
+    <div class="pdf-heading-local">4. &#1047;&#1054;&#1041;&#1054;&#1042;&#8217;&#1071;&#1047;&#1040;&#1053;&#1053;&#1071;</div>
+    <div class="pdf-body-en">The Receiving Party shall protect the Confidential Information using at least the same degree of care...</div>
+    <div class="pdf-body-local">&#1057;&#1090;&#1086;&#1088;&#1086;&#1085;&#1072;-&#1086;&#1090;&#1088;&#1080;&#1084;&#1091;&#1074;&#1072;&#1095; &#1087;&#1086;&#1074;&#1080;&#1085;&#1085;&#1072; &#1079;&#1072;&#1093;&#1080;&#1097;&#1072;&#1090;&#1080; &#1082;&#1086;&#1085;&#1092;&#1110;&#1076;&#1077;&#1085;&#1094;&#1110;&#1081;&#1085;&#1091; &#1110;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1110;&#1102; &#1079; &#1090;&#1072;&#1082;&#1080;&#1084; &#1078;&#1077; &#1089;&#1090;&#1091;&#1087;&#1077;&#1085;&#1077;&#1084; &#1076;&#1073;&#1072;&#1081;&#1083;&#1080;&#1074;&#1086;&#1089;&#1090;&#1110;...</div>
+  </div>
+  <div class="pdf-bar" style="background: linear-gradient(90deg, #8B0000, #C62828);"></div>
+</div>
+<div style="text-align: center; margin-top: 0.5rem;">
+  <div class="legend" style="justify-content: center;">
+    <div class="legend-item"><strong>EN:</strong> Cambria 11pt, #333</div>
+    <div class="legend-item"><strong>Local:</strong> Cambria Italic 9.5pt, #777</div>
+    <div class="legend-item"><strong>Heading EN:</strong> Calibri Bold 13pt</div>
+    <div class="legend-item"><strong>Heading Local:</strong> Calibri Bold-Italic 10pt, #888</div>
+  </div>
+</div>
+
+<!-- ════════════════ CONTENT JSON ════════════════ -->
+<h2>&#128220; Формат контента секций (JSON)</h2>
+<p style="color:var(--text2); margin-bottom: 1rem;">Поле <code style="color:var(--cyan);">content_en</code> / <code style="color:var(--cyan);">content_local</code> &mdash; JSON массив:</p>
+<table>
+  <thead>
+    <tr><th>type</th><th>&#1054;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077;</th><th>&#1055;&#1088;&#1080;&#1084;&#1077;&#1088;</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="mono">paragraph</td>
+      <td>&#1054;&#1073;&#1099;&#1095;&#1085;&#1099;&#1081; &#1072;&#1073;&#1079;&#1072;&#1094; &#1090;&#1077;&#1082;&#1089;&#1090;&#1072;</td>
+      <td class="mono" style="font-size:0.8rem;">{"type": "paragraph", "text": "The Parties agree..."}</td>
+    </tr>
+    <tr>
+      <td class="mono">bullet</td>
+      <td>&#1055;&#1091;&#1085;&#1082;&#1090; &#1089; &#1085;&#1086;&#1084;&#1077;&#1088;&#1086;&#1084; (1.1, (a), &#1080;&#1090;&#1076;.)</td>
+      <td class="mono" style="font-size:0.8rem;">{"type": "bullet", "label": "3.1", "text": "The Receiving Party shall..."}</td>
+    </tr>
+    <tr>
+      <td class="mono">callout</td>
+      <td>&#1042;&#1099;&#1076;&#1077;&#1083;&#1077;&#1085;&#1085;&#1099;&#1081; &#1073;&#1083;&#1086;&#1082; (tinted bg + &#1083;&#1077;&#1074;&#1072;&#1103; &#1087;&#1086;&#1083;&#1086;&#1089;&#1072;)</td>
+      <td class="mono" style="font-size:0.8rem;">{"type": "callout", "text": "IMPORTANT: ..."}</td>
+    </tr>
+    <tr>
+      <td class="mono">service_callout</td>
+      <td>&#1041;&#1083;&#1086;&#1082; &#1089; &#1086;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077;&#1084; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080; (&#1080;&#1079; employee)</td>
+      <td class="mono" style="font-size:0.8rem;">{"type": "service_callout"}</td>
+    </tr>
+    <tr>
+      <td class="mono">compensation</td>
+      <td>&#1040;&#1074;&#1090;&#1086;-&#1088;&#1072;&#1089;&#1095;&#1105;&#1090; rate &#215; (1 + tax)</td>
+      <td class="mono" style="font-size:0.8rem;">{"type": "compensation"}</td>
+    </tr>
+    <tr>
+      <td class="mono">notice_boxes</td>
+      <td>&#1040;&#1076;&#1088;&#1077;&#1089;&#1072; &#1076;&#1083;&#1103; &#1091;&#1074;&#1077;&#1076;&#1086;&#1084;&#1083;&#1077;&#1085;&#1080;&#1081; (2 &#1089;&#1090;&#1086;&#1088;&#1086;&#1085;&#1099;)</td>
+      <td class="mono" style="font-size:0.8rem;">{"type": "notice_boxes"}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ════════════════ FILE TREE ════════════════ -->
+<h2>&#128193; &#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; &#1084;&#1086;&#1076;&#1091;&#1083;&#1103;</h2>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background: var(--green);"></div> &#1053;&#1086;&#1074;&#1099;&#1081; &#1092;&#1072;&#1081;&#1083;</div>
+  <div class="legend-item"><div class="legend-dot" style="background: var(--orange);"></div> &#1048;&#1079;&#1084;&#1077;&#1085;&#1105;&#1085;</div>
+  <div class="legend-item"><div class="legend-dot" style="background: var(--text2);"></div> &#1041;&#1077;&#1079; &#1080;&#1079;&#1084;&#1077;&#1085;&#1077;&#1085;&#1080;&#1081;</div>
+</div>
+<div class="tree">
+<span class="dir">ws_contracts_odoo/</span>
+&#9500;&#9472; <span class="mod">__manifest__.py</span> &larr; v18.0.2.0.0, &#1085;&#1086;&#1074;&#1099;&#1077; data/views
+&#9500;&#9472; <span class="mod">__init__.py</span>
+&#9500;&#9472; <span class="dir">lib/</span>
+&#9474;  &#9500;&#9472; <span class="new">theme.py</span> &larr; CompanyTheme, SectionData, TemplateData, palettes
+&#9474;  &#9500;&#9472; <span class="mod">pdf_generators.py</span> &larr; &#1087;&#1072;&#1088;&#1072;&#1084;&#1077;&#1090;&#1088;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; + BilingualRenderer
+&#9474;  &#9500;&#9472; <span class="old">nda_text.py</span> &larr; legacy &#1089;&#1077;&#1082;&#1094;&#1080;&#1080; (fallback)
+&#9474;  &#9492;&#9472; <span class="old">contract_text.py</span> &larr; legacy &#1089;&#1077;&#1082;&#1094;&#1080;&#1080; (fallback)
+&#9500;&#9472; <span class="dir">models/</span>
+&#9474;  &#9500;&#9472; <span class="mod">__init__.py</span>
+&#9474;  &#9500;&#9472; <span class="mod">hr_employee.py</span> &larr; + ws_document_ids, smart button
+&#9474;  &#9500;&#9472; <span class="new">contract_template.py</span> &larr; ws.contract.template
+&#9474;  &#9500;&#9472; <span class="new">contract_template_section.py</span> &larr; ws.contract.template.section
+&#9474;  &#9492;&#9472; <span class="new">contract_document.py</span> &larr; ws.contract.document + Sign
+&#9500;&#9472; <span class="dir">wizards/</span>
+&#9474;  &#9492;&#9472; <span class="mod">generate_wizard.py</span> &larr; + template selection
+&#9500;&#9472; <span class="dir">views/</span>
+&#9474;  &#9500;&#9472; <span class="new">contract_template_views.xml</span> &larr; tree/form/search + &#1084;&#1077;&#1085;&#1102;
+&#9474;  &#9500;&#9472; <span class="new">contract_document_views.xml</span> &larr; statusbar workflow
+&#9474;  &#9500;&#9472; <span class="mod">generate_wizard_views.xml</span> &larr; + template toggle
+&#9474;  &#9492;&#9472; <span class="mod">hr_employee_views.xml</span> &larr; + Documents tab
+&#9500;&#9472; <span class="dir">data/</span>
+&#9474;  &#9500;&#9472; <span class="new">nda_template_ws.xml</span> &larr; seed: NDA 12 &#1089;&#1077;&#1082;&#1094;&#1080;&#1081;
+&#9474;  &#9500;&#9472; <span class="new">contract_template_ws.xml</span> &larr; seed: Contract 23 &#1089;&#1077;&#1082;&#1094;&#1080;&#1080;
+&#9474;  &#9492;&#9472; <span class="new">cron.xml</span> &larr; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1072; &#1089;&#1090;&#1072;&#1090;&#1091;&#1089;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080; (hourly)
+&#9500;&#9472; <span class="dir">security/</span>
+&#9474;  &#9492;&#9472; <span class="mod">ir.model.access.csv</span> &larr; 7 rules (user/manager)
+&#9492;&#9472; <span class="dir">fonts/</span>
+   &#9492;&#9472; <span class="old">cambria*.ttf, calibri*.ttf</span>
+</div>
+
+<!-- ════════════════ PYTHON DATACLASSES ════════════════ -->
+<h2>&#128421; &#1050;&#1083;&#1102;&#1095;&#1077;&#1074;&#1099;&#1077; dataclasses (lib/theme.py)</h2>
+<div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));">
+  <div class="card">
+    <div class="card-title" style="color: var(--cyan);">CompanyTheme</div>
+    <table style="margin:0;">
+      <tr><td class="mono">company_name</td><td>"Woodenshark LLC"</td></tr>
+      <tr><td class="mono">company_address</td><td>"3411 Silverside..."</td></tr>
+      <tr><td class="mono">primary_color</td><td style="color:#8B0000;">"#8B0000"</td></tr>
+      <tr><td class="mono">accent_color</td><td style="color:#D4AF37;">"#D4AF37"</td></tr>
+      <tr><td class="mono">watermark_text</td><td>"CONFIDENTIAL"</td></tr>
+      <tr><td class="mono">signatory_name/title</td><td>&#1055;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085;&#1090;</td></tr>
+      <tr><td class="mono">local_lang</td><td>None / "pl" / "uk"</td></tr>
+      <tr><td class="mono">bank_swift/account/name</td><td>&#1041;&#1072;&#1085;&#1082; &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1080;</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title" style="color: var(--purple);">SectionData</div>
+    <table style="margin:0;">
+      <tr><td class="mono">sequence</td><td>10, 20, 30...</td></tr>
+      <tr><td class="mono">title_en</td><td>"1. DEFINITIONS"</td></tr>
+      <tr><td class="mono">title_local</td><td>"1. &#1042;&#1048;&#1047;&#1053;&#1040;&#1063;&#1045;&#1053;&#1053;&#1071;"</td></tr>
+      <tr><td class="mono">content_en</td><td>[{type, text}, ...]</td></tr>
+      <tr><td class="mono">content_local</td><td>[{type, text}, ...]</td></tr>
+      <tr><td class="mono">style</td><td>"normal" | "callout"</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title" style="color: var(--accent);">TemplateData</div>
+    <table style="margin:0;">
+      <tr><td class="mono">doc_type</td><td>"nda" | "contract" | ...</td></tr>
+      <tr><td class="mono">doc_title</td><td>"Non-Disclosure Agreement"</td></tr>
+      <tr><td class="mono">theme</td><td>CompanyTheme</td></tr>
+      <tr><td class="mono">sections</td><td>list[SectionData]</td></tr>
+      <tr><td class="mono">palette</td><td>NDA_PALETTE / CONTRACT_PALETTE</td></tr>
+      <tr><td class="mono">nda_term_years</td><td>5</td></tr>
+      <tr><td class="mono">tax_rate</td><td>0.06</td></tr>
+      <tr><td class="mono">classification_label</td><td>"STRICTLY CONFIDENTIAL"</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════ SEED DATA ════════════════ -->
+<h2>&#127793; Seed Data (&#1087;&#1088;&#1080; &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1082;&#1077; &#1084;&#1086;&#1076;&#1091;&#1083;&#1103;)</h2>
+<div class="cards">
+  <div class="card" style="border-left: 3px solid var(--red);">
+    <div class="card-title"><span class="icon">&#128220;</span> NDA &mdash; Woodenshark LLC</div>
+    <p><strong>12 &#1089;&#1077;&#1082;&#1094;&#1080;&#1081;:</strong></p>
+    <ul>
+      <li>1. Definitions (7 &#1087;&#1091;&#1085;&#1082;&#1090;&#1086;&#1074;)</li>
+      <li>2. Confidential Information (6 &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1081;)</li>
+      <li>3. Obligations (7 &#1087;&#1091;&#1085;&#1082;&#1090;&#1086;&#1074;)</li>
+      <li>4. Exclusions (5 &#1080;&#1089;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1081;)</li>
+      <li>5. Term &amp; Termination</li>
+      <li>6. Return of Materials</li>
+      <li>7. Remedies (+ callout)</li>
+      <li>8. Non-Solicitation</li>
+      <li>9. Intellectual Property</li>
+      <li>10. Governing Law (Delaware)</li>
+      <li>11. General Provisions (8 &#1087;&#1091;&#1085;&#1082;&#1090;&#1086;&#1074;)</li>
+      <li>12. Entire Agreement</li>
+    </ul>
+  </div>
+  <div class="card" style="border-left: 3px solid var(--accent);">
+    <div class="card-title"><span class="icon">&#128220;</span> Consulting Agreement &mdash; Woodenshark LLC</div>
+    <p><strong>23 &#1089;&#1077;&#1082;&#1094;&#1080;&#1080;:</strong></p>
+    <ul>
+      <li>1. Background</li>
+      <li>2. Services Provided <span class="tag tag-cyan">service_callout</span></li>
+      <li>3. Term of Agreement</li>
+      <li>4. Performance</li>
+      <li>5. Currency (USD)</li>
+      <li>6. Compensation <span class="tag tag-cyan">auto-calc</span></li>
+      <li>7. Reimbursement</li>
+      <li>8. Confidentiality</li>
+      <li>9. IP Ownership</li>
+      <li>10. Return of Property</li>
+      <li>11. Independent Contractor</li>
+      <li>12. Notice <span class="tag tag-cyan">notice_boxes</span></li>
+      <li>13&ndash;23. Indemnification, Modification, Assignment, Governing Law, etc.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════ PHASES ════════════════ -->
+<h2>&#128197; &#1060;&#1072;&#1079;&#1099; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080;</h2>
+<div class="timeline">
+  <div class="phase done">
+    <div class="phase-title">Phase 1: CompanyTheme + &#1087;&#1072;&#1088;&#1072;&#1084;&#1077;&#1090;&#1088;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; PDF <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">Dataclasses, &#1088;&#1077;&#1092;&#1072;&#1082;&#1090;&#1086;&#1088;&#1080;&#1085;&#1075; generate_nda/generate_contract, BilingualRenderer</div>
+    <div class="phase-files">lib/theme.py, lib/pdf_generators.py</div>
+  </div>
+  <div class="phase done">
+    <div class="phase-title">Phase 2: Odoo-&#1084;&#1086;&#1076;&#1077;&#1083;&#1080; &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;&#1086;&#1074; <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">3 &#1084;&#1086;&#1076;&#1077;&#1083;&#1080; + views + security + &#1084;&#1077;&#1085;&#1102;</div>
+    <div class="phase-files">models/contract_template*.py, models/contract_document.py</div>
+  </div>
+  <div class="phase done">
+    <div class="phase-title">Phase 3: Seed Data <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">12 NDA + 23 Contract &#1089;&#1077;&#1082;&#1094;&#1080;&#1081; &#1074; XML</div>
+    <div class="phase-files">data/nda_template_ws.xml, data/contract_template_ws.xml</div>
+  </div>
+  <div class="phase done">
+    <div class="phase-title">Phase 4: Wizard &#1075;&#1077;&#1085;&#1077;&#1088;&#1072;&#1094;&#1080;&#1080; <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">Template selection, legacy fallback, &#1072;&#1074;&#1090;&#1086;-document</div>
+    <div class="phase-files">wizards/generate_wizard.py, views/generate_wizard_views.xml</div>
+  </div>
+  <div class="phase done">
+    <div class="phase-title">Phase 5: Odoo Sign <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">sign.template &rarr; sign.request, dual-signer, cron</div>
+    <div class="phase-files">models/contract_document.py, data/cron.xml</div>
+  </div>
+  <div class="phase done">
+    <div class="phase-title">Phase 6: &#1060;&#1080;&#1085;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">__manifest__ v2.0.0, 55/55 &#1090;&#1077;&#1089;&#1090;&#1086;&#1074;, git push</div>
+    <div class="phase-files">__manifest__.py</div>
+  </div>
+</div>
+
+<!-- ════════════════ NEXT STEPS ════════════════ -->
+<h2>&#127937; Next Steps</h2>
+<div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+  <div class="card" style="border-left: 3px solid var(--orange);">
+    <div class="card-title"><span class="icon">&#128274;</span> Admin rights</div>
+    <p>&#1055;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; admin &#1085;&#1072; Odoo.sh &rarr; &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1080;&#1090;&#1100; &#1084;&#1086;&#1076;&#1091;&#1083;&#1100;</p>
+  </div>
+  <div class="card" style="border-left: 3px solid var(--purple);">
+    <div class="card-title"><span class="icon">&#127970;</span> &#1064;&#1072;&#1073;&#1083;&#1086;&#1085;&#1099; &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1081;</div>
+    <p>&#1057;&#1086;&#1079;&#1076;&#1072;&#1090;&#1100; &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;&#1099; &#1076;&#1083;&#1103; &#1074;&#1089;&#1077;&#1093; 9 &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1081; &#1095;&#1077;&#1088;&#1077;&#1079; UI</p>
+  </div>
+  <div class="card" style="border-left: 3px solid var(--cyan);">
+    <div class="card-title"><span class="icon">&#127760;</span> &#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;&#1099;</div>
+    <p>&#1044;&#1086;&#1073;&#1072;&#1074;&#1080;&#1090;&#1100; PL/UK &#1090;&#1077;&#1082;&#1089;&#1090;&#1099; &#1074; &#1089;&#1077;&#1082;&#1094;&#1080;&#1080; &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;&#1086;&#1074;</p>
+  </div>
+  <div class="card" style="border-left: 3px solid var(--green);">
+    <div class="card-title"><span class="icon">&#128640;</span> E2E &#1090;&#1077;&#1089;&#1090;</div>
+    <p>&#1043;&#1077;&#1085;&#1077;&#1088;&#1072;&#1094;&#1080;&#1103; + &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100; &#1085;&#1072; test50 &#1080;&#1085;&#1089;&#1090;&#1072;&#1085;&#1089;&#1077;</p>
+  </div>
+</div>
+
+<hr style="border: none; border-top: 1px solid var(--border); margin: 3rem 0 1rem;">
+<p style="color: var(--text2); font-size: 0.8rem; text-align: center;">
+  ws-contracts v2 &mdash; commit <code>524861b</code> &mdash; &#1089;&#1075;&#1077;&#1085;&#1077;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086; 2026-03-19
+</p>
+
+</body>
+</html>
