@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ws-contracts v2 — Plan</title>
+<title>ws-contracts v2 — Odoo 18 Module</title>
 <style>
   :root {
     --bg: #0d1117;
@@ -126,6 +126,7 @@
   .field-pk { color: var(--orange); }
   .field-fk { color: var(--cyan); }
   .field-rel { color: var(--purple); font-size: 0.75rem; }
+  .field-new { color: var(--green); }
 
   /* Arrow connectors (simplified) */
   .relations {
@@ -243,12 +244,42 @@
   .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0; font-size: 0.85rem; }
   .legend-item { display: flex; align-items: center; gap: 0.4rem; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* User guide steps */
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  /* Deploy info */
+  .deploy-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1.5rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .deploy-label { color: var(--text2); font-weight: 600; white-space: nowrap; }
+  .deploy-value { color: var(--text); }
+  .deploy-value code { color: var(--cyan); font-family: 'Cascadia Code', monospace; font-size: 0.85rem; }
 </style>
 </head>
 <body>
 
-<h1>ws-contracts v2</h1>
-<p class="subtitle">Multi-Company Bilingual Contract System &mdash; Woodenshark / OMD Systems</p>
+<h1>ws-contracts v2 &mdash; Odoo 18 Module</h1>
+<p class="subtitle">Multi-Company Bilingual Contract System &mdash; Installed on Odoo.sh test</p>
 
 <!-- ════════════════ PROBLEM ════════════════ -->
 <h2>Было &rarr; Стало</h2>
@@ -273,6 +304,12 @@
       <li>Любые типы контрактов через секции</li>
       <li>Lifecycle: draft &rarr; generated &rarr; signed &rarr; archived</li>
       <li>Odoo Sign &mdash; цифровая подпись</li>
+      <li>Kanban view с progressbar по статусам</li>
+      <li>Chatter (mail tracking) на документах</li>
+      <li>Bulk actions: Generate PDF, Archive</li>
+      <li>Multi-company record rules</li>
+      <li>Smart buttons на сотрудниках (Documents, Pending Sign)</li>
+      <li>Color picker на шаблонах</li>
     </ul>
   </div>
 </div>
@@ -299,7 +336,7 @@
       <td>OM Digital Solutions sp. z o.o.</td>
       <td><span class="tag tag-purple">PL</span></td>
       <td>EN + <strong>PL</strong></td>
-      <td><span class="tag tag-red">NDA</span> <span class="tag tag-purple">Umowa o prac&#281;</span> <span class="tag tag-cyan">Umowa B2B</span></td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-purple">Umowa o pracę</span> <span class="tag tag-cyan">Umowa B2B</span></td>
     </tr>
     <tr>
       <td>OMD Systems sp. z o.o.</td>
@@ -323,7 +360,7 @@
       <td>OMD Systems Ukraine</td>
       <td><span class="tag tag-orange">UA</span></td>
       <td>EN + <strong>UK</strong></td>
-      <td><span class="tag tag-red">NDA</span> <span class="tag tag-cyan">&#1044;&#1086;&#1075;&#1086;&#1074;&#1110;&#1088; &#1087;&#1110;&#1076;&#1088;&#1103;&#1076;&#1091;</span></td>
+      <td><span class="tag tag-red">NDA</span> <span class="tag tag-cyan">Договір підряду</span></td>
     </tr>
   </tbody>
 </table>
@@ -343,8 +380,8 @@
       <div class="field"><span class="field-name">name</span> <span class="field-type">char</span></div>
       <div class="field"><span class="field-name">doc_type</span> <span class="field-type">nda | contract | nca | ...</span></div>
       <div class="field"><span class="field-name">local_lang</span> <span class="field-type">none | pl | uk</span></div>
-      <div class="field"><span class="field-name">primary_color</span> <span class="field-type">char &quot;#8B0000&quot;</span></div>
-      <div class="field"><span class="field-name">accent_color</span> <span class="field-type">char &quot;#D4AF37&quot;</span></div>
+      <div class="field"><span class="field-name">primary_color</span> <span class="field-type">char "#8B0000"</span></div>
+      <div class="field"><span class="field-name">accent_color</span> <span class="field-type">char "#D4AF37"</span></div>
       <div class="field"><span class="field-name">watermark_text</span> <span class="field-type">char</span></div>
       <div class="field"><span class="field-name">signatory_name / title / email</span> <span class="field-type">char</span></div>
       <div class="field"><span class="field-name">company_address</span> <span class="field-type">text</span></div>
@@ -365,8 +402,8 @@
       <div class="field"><span class="field-pk">id</span> <span class="field-type">int PK</span></div>
       <div class="field"><span class="field-fk">template_id</span> <span class="field-type">FK &rarr; ws.contract.template</span></div>
       <div class="field"><span class="field-name">sequence</span> <span class="field-type">int (10, 20, 30...)</span></div>
-      <div class="field"><span class="field-name">title_en</span> <span class="field-type">char &quot;1. DEFINITIONS&quot;</span></div>
-      <div class="field"><span class="field-name">title_local</span> <span class="field-type">char &quot;1. &#1042;&#1048;&#1047;&#1053;&#1040;&#1063;&#1045;&#1053;&#1053;&#1071;&quot;</span></div>
+      <div class="field"><span class="field-name">title_en</span> <span class="field-type">char "1. DEFINITIONS"</span></div>
+      <div class="field"><span class="field-name">title_local</span> <span class="field-type">char "1. ВИЗНАЧЕННЯ"</span></div>
       <div class="field"><span class="field-name">content_en</span> <span class="field-type">JSON [{type, text}]</span></div>
       <div class="field"><span class="field-name">content_local</span> <span class="field-type">JSON [{type, text}]</span></div>
       <div class="field"><span class="field-name">style</span> <span class="field-type">normal | callout | notice</span></div>
@@ -380,10 +417,11 @@
     </div>
     <div class="entity-fields">
       <div class="field"><span class="field-pk">id</span> <span class="field-type">int PK</span></div>
-      <div class="field"><span class="field-fk">employee_id</span> <span class="field-type">FK &rarr; hr.employee</span></div>
-      <div class="field"><span class="field-fk">template_id</span> <span class="field-type">FK &rarr; ws.contract.template</span></div>
+      <div class="field"><span class="field-fk">employee_id</span> <span class="field-type">FK &rarr; hr.employee <span class="tag tag-cyan" style="font-size:0.65rem;">tracking=True</span></span></div>
+      <div class="field"><span class="field-fk">template_id</span> <span class="field-type">FK &rarr; ws.contract.template <span class="tag tag-cyan" style="font-size:0.65rem;">tracking=True</span></span></div>
       <div class="field"><span class="field-name">state</span> <span class="field-type">draft | generated | sent | signed | archived</span></div>
-      <div class="field"><span class="field-fk">pdf_attachment_id</span> <span class="field-type">FK &rarr; ir.attachment</span></div>
+      <div class="field"><span class="field-new">display_name</span> <span class="field-type">computed (name_get)</span></div>
+      <div class="field"><span class="field-fk">pdf_attachment_id</span> <span class="field-type">FK &rarr; ir.attachment <span class="tag tag-cyan" style="font-size:0.65rem;">tracking=True</span></span></div>
       <div class="field"><span class="field-fk">sign_request_id</span> <span class="field-type">FK &rarr; sign.request</span></div>
       <div class="field"><span class="field-name">generated_date</span> <span class="field-type">datetime</span></div>
       <div class="field"><span class="field-name">signed_date</span> <span class="field-type">datetime</span></div>
@@ -407,6 +445,7 @@
       <div class="field"><span class="field-name">ws_agreement_date / effective_date</span> <span class="field-type">date</span></div>
       <div class="field"><span class="field-rel">&#x25BC; ws_document_ids &rarr; One2many</span></div>
       <div class="field"><span class="field-rel">ws_document_count &rarr; computed</span></div>
+      <div class="field"><span class="field-new">ws_pending_sign_count</span> <span class="field-type">computed (count sent)</span></div>
     </div>
   </div>
 
@@ -439,23 +478,23 @@
 <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
   <div class="card">
     <div class="card-title">Draft</div>
-    <p>&#1057;&#1086;&#1079;&#1076;&#1072;&#1085;&#1072; &#1079;&#1072;&#1087;&#1080;&#1089;&#1100;: &#1089;&#1086;&#1090;&#1088;&#1091;&#1076;&#1085;&#1080;&#1082; + &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;. PDF &#1077;&#1097;&#1105; &#1085;&#1077; &#1089;&#1075;&#1077;&#1085;&#1077;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;.</p>
+    <p>Создана запись: сотрудник + шаблон. PDF ещё не сгенерирован. <br><span class="tag tag-red">decoration-danger</span> в list view &mdash; требует внимания.</p>
   </div>
   <div class="card">
     <div class="card-title">Generated</div>
-    <p>PDF &#1089;&#1086;&#1079;&#1076;&#1072;&#1085; &#1080; &#1089;&#1086;&#1093;&#1088;&#1072;&#1085;&#1105;&#1085; &#1074; ir.attachment. &#1052;&#1086;&#1078;&#1085;&#1086; &#1089;&#1082;&#1072;&#1095;&#1072;&#1090;&#1100;.</p>
+    <p>PDF создан и сохранён в ir.attachment. Можно скачать. <br><span class="tag tag-red">Красная подсветка</span> &mdash; нужно подписать. Bulk generate доступен.</p>
   </div>
   <div class="card">
     <div class="card-title">Sent for Sign</div>
-    <p>&#1054;&#1090;&#1087;&#1088;&#1072;&#1074;&#1083;&#1077;&#1085; &#1095;&#1077;&#1088;&#1077;&#1079; Odoo Sign. &#1046;&#1076;&#1105;&#1084; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100; &#1086;&#1073;&#1077;&#1080;&#1093; &#1089;&#1090;&#1086;&#1088;&#1086;&#1085;.</p>
+    <p>Отправлен через Odoo Sign. Ждём подпись обеих сторон.</p>
   </div>
   <div class="card">
     <div class="card-title">Signed</div>
-    <p>&#1054;&#1073;&#1077; &#1089;&#1090;&#1086;&#1088;&#1086;&#1085;&#1099; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1083;&#1080;. Cron &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1103;&#1077;&#1090; &#1082;&#1072;&#1078;&#1076;&#1099;&#1081; &#1095;&#1072;&#1089;.</p>
+    <p>Обе стороны подписали. Cron проверяет каждый час.</p>
   </div>
   <div class="card">
     <div class="card-title">Archived</div>
-    <p>&#1044;&#1086;&#1082;&#1091;&#1084;&#1077;&#1085;&#1090; &#1074; &#1072;&#1088;&#1093;&#1080;&#1074;&#1077;. &#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1077;&#1085; &#1076;&#1083;&#1103; &#1095;&#1090;&#1077;&#1085;&#1080;&#1103;.</p>
+    <p>Документ в архиве. Доступен для чтения. <br><span class="tag tag-blue">Фильтр Active</span> скрывает архивные по умолчанию.</p>
   </div>
 </div>
 
@@ -465,14 +504,14 @@
   <div class="pdf-bar" style="background: linear-gradient(90deg, #8B0000, #C62828);"></div>
   <div class="pdf-content">
     <div class="pdf-heading-en" style="color: #8B0000;">SECTION 3. CONFIDENTIAL INFORMATION</div>
-    <div class="pdf-heading-local">3. &#1030;&#1053;&#1060;&#1054;&#1056;&#1052;&#1040;&#1062;&#1030;&#1071; &#1050;&#1054;&#1053;&#1060;&#1030;&#1044;&#1045;&#1053;&#1062;&#1030;&#1049;&#1053;&#1054;&#1043;&#1054; &#1061;&#1040;&#1056;&#1040;&#1050;&#1058;&#1045;&#1056;&#1059;</div>
+    <div class="pdf-heading-local">3. ІНФОРМАЦІЯ КОНФІДЕНЦІЙНОГО ХАРАКТЕРУ</div>
     <div class="pdf-body-en">The Receiving Party agrees to hold and maintain all Confidential Information in strict confidence for the sole benefit of the Disclosing Party.</div>
-    <div class="pdf-body-local">&#1057;&#1090;&#1086;&#1088;&#1086;&#1085;&#1072;-&#1086;&#1090;&#1088;&#1080;&#1084;&#1091;&#1074;&#1072;&#1095; &#1079;&#1086;&#1073;&#1086;&#1074;&#8217;&#1103;&#1079;&#1091;&#1108;&#1090;&#1100;&#1089;&#1103; &#1079;&#1073;&#1077;&#1088;&#1110;&#1075;&#1072;&#1090;&#1080; &#1082;&#1086;&#1085;&#1092;&#1110;&#1076;&#1077;&#1085;&#1094;&#1110;&#1081;&#1085;&#1091; &#1110;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1110;&#1102; &#1074;&#1080;&#1082;&#1083;&#1102;&#1095;&#1085;&#1086; &#1074; &#1110;&#1085;&#1090;&#1077;&#1088;&#1077;&#1089;&#1072;&#1093; &#1057;&#1090;&#1086;&#1088;&#1086;&#1085;&#1080;, &#1097;&#1086; &#1088;&#1086;&#1079;&#1082;&#1088;&#1080;&#1074;&#1072;&#1108;.</div>
+    <div class="pdf-body-local">Сторона-отримувач зобов'язується зберігати конфіденційну інформацію виключно в інтересах Сторони, що розкриває.</div>
     <div class="pdf-sep"></div>
     <div class="pdf-heading-en" style="color: #8B0000;">SECTION 4. OBLIGATIONS</div>
-    <div class="pdf-heading-local">4. &#1047;&#1054;&#1041;&#1054;&#1042;&#8217;&#1071;&#1047;&#1040;&#1053;&#1053;&#1071;</div>
+    <div class="pdf-heading-local">4. ЗОБОВ'ЯЗАННЯ</div>
     <div class="pdf-body-en">The Receiving Party shall protect the Confidential Information using at least the same degree of care...</div>
-    <div class="pdf-body-local">&#1057;&#1090;&#1086;&#1088;&#1086;&#1085;&#1072;-&#1086;&#1090;&#1088;&#1080;&#1084;&#1091;&#1074;&#1072;&#1095; &#1087;&#1086;&#1074;&#1080;&#1085;&#1085;&#1072; &#1079;&#1072;&#1093;&#1080;&#1097;&#1072;&#1090;&#1080; &#1082;&#1086;&#1085;&#1092;&#1110;&#1076;&#1077;&#1085;&#1094;&#1110;&#1081;&#1085;&#1091; &#1110;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1110;&#1102; &#1079; &#1090;&#1072;&#1082;&#1080;&#1084; &#1078;&#1077; &#1089;&#1090;&#1091;&#1087;&#1077;&#1085;&#1077;&#1084; &#1076;&#1073;&#1072;&#1081;&#1083;&#1080;&#1074;&#1086;&#1089;&#1090;&#1110;...</div>
+    <div class="pdf-body-local">Сторона-отримувач повинна захищати конфіденційну інформацію з таким же ступенем дбайливості...</div>
   </div>
   <div class="pdf-bar" style="background: linear-gradient(90deg, #8B0000, #C62828);"></div>
 </div>
@@ -490,83 +529,85 @@
 <p style="color:var(--text2); margin-bottom: 1rem;">Поле <code style="color:var(--cyan);">content_en</code> / <code style="color:var(--cyan);">content_local</code> &mdash; JSON массив:</p>
 <table>
   <thead>
-    <tr><th>type</th><th>&#1054;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077;</th><th>&#1055;&#1088;&#1080;&#1084;&#1077;&#1088;</th></tr>
+    <tr><th>type</th><th>Описание</th><th>Пример</th></tr>
   </thead>
   <tbody>
     <tr>
       <td class="mono">paragraph</td>
-      <td>&#1054;&#1073;&#1099;&#1095;&#1085;&#1099;&#1081; &#1072;&#1073;&#1079;&#1072;&#1094; &#1090;&#1077;&#1082;&#1089;&#1090;&#1072;</td>
+      <td>Обычный абзац текста</td>
       <td class="mono" style="font-size:0.8rem;">{"type": "paragraph", "text": "The Parties agree..."}</td>
     </tr>
     <tr>
       <td class="mono">bullet</td>
-      <td>&#1055;&#1091;&#1085;&#1082;&#1090; &#1089; &#1085;&#1086;&#1084;&#1077;&#1088;&#1086;&#1084; (1.1, (a), &#1080;&#1090;&#1076;.)</td>
+      <td>Пункт с номером (1.1, (a), итд.)</td>
       <td class="mono" style="font-size:0.8rem;">{"type": "bullet", "label": "3.1", "text": "The Receiving Party shall..."}</td>
     </tr>
     <tr>
       <td class="mono">callout</td>
-      <td>&#1042;&#1099;&#1076;&#1077;&#1083;&#1077;&#1085;&#1085;&#1099;&#1081; &#1073;&#1083;&#1086;&#1082; (tinted bg + &#1083;&#1077;&#1074;&#1072;&#1103; &#1087;&#1086;&#1083;&#1086;&#1089;&#1072;)</td>
+      <td>Выделенный блок (tinted bg + левая полоса)</td>
       <td class="mono" style="font-size:0.8rem;">{"type": "callout", "text": "IMPORTANT: ..."}</td>
     </tr>
     <tr>
       <td class="mono">service_callout</td>
-      <td>&#1041;&#1083;&#1086;&#1082; &#1089; &#1086;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077;&#1084; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080; (&#1080;&#1079; employee)</td>
+      <td>Блок с описанием услуги (из employee)</td>
       <td class="mono" style="font-size:0.8rem;">{"type": "service_callout"}</td>
     </tr>
     <tr>
       <td class="mono">compensation</td>
-      <td>&#1040;&#1074;&#1090;&#1086;-&#1088;&#1072;&#1089;&#1095;&#1105;&#1090; rate &#215; (1 + tax)</td>
+      <td>Авто-расчёт rate &times; (1 + tax)</td>
       <td class="mono" style="font-size:0.8rem;">{"type": "compensation"}</td>
     </tr>
     <tr>
       <td class="mono">notice_boxes</td>
-      <td>&#1040;&#1076;&#1088;&#1077;&#1089;&#1072; &#1076;&#1083;&#1103; &#1091;&#1074;&#1077;&#1076;&#1086;&#1084;&#1083;&#1077;&#1085;&#1080;&#1081; (2 &#1089;&#1090;&#1086;&#1088;&#1086;&#1085;&#1099;)</td>
+      <td>Адреса для уведомлений (2 стороны)</td>
       <td class="mono" style="font-size:0.8rem;">{"type": "notice_boxes"}</td>
     </tr>
   </tbody>
 </table>
 
 <!-- ════════════════ FILE TREE ════════════════ -->
-<h2>&#128193; &#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; &#1084;&#1086;&#1076;&#1091;&#1083;&#1103;</h2>
+<h2>&#128193; Структура модуля</h2>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background: var(--green);"></div> &#1053;&#1086;&#1074;&#1099;&#1081; &#1092;&#1072;&#1081;&#1083;</div>
-  <div class="legend-item"><div class="legend-dot" style="background: var(--orange);"></div> &#1048;&#1079;&#1084;&#1077;&#1085;&#1105;&#1085;</div>
-  <div class="legend-item"><div class="legend-dot" style="background: var(--text2);"></div> &#1041;&#1077;&#1079; &#1080;&#1079;&#1084;&#1077;&#1085;&#1077;&#1085;&#1080;&#1081;</div>
+  <div class="legend-item"><div class="legend-dot" style="background: var(--green);"></div> Новый файл</div>
+  <div class="legend-item"><div class="legend-dot" style="background: var(--orange);"></div> Изменён</div>
+  <div class="legend-item"><div class="legend-dot" style="background: var(--text2);"></div> Без изменений</div>
 </div>
 <div class="tree">
 <span class="dir">ws_contracts_odoo/</span>
-&#9500;&#9472; <span class="mod">__manifest__.py</span> &larr; v18.0.2.0.0, &#1085;&#1086;&#1074;&#1099;&#1077; data/views
+&#9500;&#9472; <span class="mod">__manifest__.py</span> &larr; v18.0.2.0.0, +2 data files (server_actions, ir_rules)
 &#9500;&#9472; <span class="mod">__init__.py</span>
 &#9500;&#9472; <span class="dir">lib/</span>
 &#9474;  &#9500;&#9472; <span class="new">theme.py</span> &larr; CompanyTheme, SectionData, TemplateData, palettes
-&#9474;  &#9500;&#9472; <span class="mod">pdf_generators.py</span> &larr; &#1087;&#1072;&#1088;&#1072;&#1084;&#1077;&#1090;&#1088;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; + BilingualRenderer
-&#9474;  &#9500;&#9472; <span class="old">nda_text.py</span> &larr; legacy &#1089;&#1077;&#1082;&#1094;&#1080;&#1080; (fallback)
-&#9474;  &#9492;&#9472; <span class="old">contract_text.py</span> &larr; legacy &#1089;&#1077;&#1082;&#1094;&#1080;&#1080; (fallback)
+&#9474;  &#9500;&#9472; <span class="mod">pdf_generators.py</span> &larr; параметризация + BilingualRenderer
+&#9474;  &#9500;&#9472; <span class="old">nda_text.py</span> &larr; legacy секции (fallback)
+&#9474;  &#9492;&#9472; <span class="old">contract_text.py</span> &larr; legacy секции (fallback)
 &#9500;&#9472; <span class="dir">models/</span>
 &#9474;  &#9500;&#9472; <span class="mod">__init__.py</span>
-&#9474;  &#9500;&#9472; <span class="mod">hr_employee.py</span> &larr; + ws_document_ids, smart button
+&#9474;  &#9500;&#9472; <span class="mod">hr_employee.py</span> &larr; + ws_document_ids, smart buttons, ws_pending_sign_count
 &#9474;  &#9500;&#9472; <span class="new">contract_template.py</span> &larr; ws.contract.template
 &#9474;  &#9500;&#9472; <span class="new">contract_template_section.py</span> &larr; ws.contract.template.section
-&#9474;  &#9492;&#9472; <span class="new">contract_document.py</span> &larr; ws.contract.document + Sign
+&#9474;  &#9492;&#9472; <span class="new">contract_document.py</span> &larr; ws.contract.document + Sign + chatter
 &#9500;&#9472; <span class="dir">wizards/</span>
 &#9474;  &#9492;&#9472; <span class="mod">generate_wizard.py</span> &larr; + template selection
 &#9500;&#9472; <span class="dir">views/</span>
-&#9474;  &#9500;&#9472; <span class="new">contract_template_views.xml</span> &larr; tree/form/search + &#1084;&#1077;&#1085;&#1102;
-&#9474;  &#9500;&#9472; <span class="new">contract_document_views.xml</span> &larr; statusbar workflow
+&#9474;  &#9500;&#9472; <span class="new">contract_template_views.xml</span> &larr; list/form/search + меню + color picker
+&#9474;  &#9500;&#9472; <span class="new">contract_document_views.xml</span> &larr; statusbar, kanban, progressbar
+&#9474;  &#9500;&#9472; <span class="new">server_actions.xml</span> &larr; <span class="tag tag-green" style="font-size:0.7rem;">NEW</span> bulk Generate PDF + Archive
 &#9474;  &#9500;&#9472; <span class="mod">generate_wizard_views.xml</span> &larr; + template toggle
-&#9474;  &#9492;&#9472; <span class="mod">hr_employee_views.xml</span> &larr; + Documents tab
+&#9474;  &#9492;&#9472; <span class="mod">hr_employee_views.xml</span> &larr; + Documents tab + smart buttons
 &#9500;&#9472; <span class="dir">data/</span>
-&#9474;  &#9500;&#9472; <span class="new">nda_template_ws.xml</span> &larr; seed: NDA 12 &#1089;&#1077;&#1082;&#1094;&#1080;&#1081;
-&#9474;  &#9500;&#9472; <span class="new">contract_template_ws.xml</span> &larr; seed: Contract 23 &#1089;&#1077;&#1082;&#1094;&#1080;&#1080;
-&#9474;  &#9492;&#9472; <span class="new">cron.xml</span> &larr; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1072; &#1089;&#1090;&#1072;&#1090;&#1091;&#1089;&#1072; &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1080; (hourly)
+&#9474;  &#9500;&#9472; <span class="new">nda_template_ws.xml</span> &larr; seed: NDA 12 секций
+&#9474;  &#9500;&#9472; <span class="new">contract_template_ws.xml</span> &larr; seed: Contract 23 секции
+&#9474;  &#9492;&#9472; <span class="new">cron.xml</span> &larr; проверка статуса подписи (hourly)
 &#9500;&#9472; <span class="dir">security/</span>
-&#9474;  &#9492;&#9472; <span class="mod">ir.model.access.csv</span> &larr; 7 rules (user/manager)
+&#9474;  &#9500;&#9472; <span class="mod">ir.model.access.csv</span> &larr; 7 rules (user/manager)
+&#9474;  &#9492;&#9472; <span class="new">ir_rules.xml</span> &larr; <span class="tag tag-green" style="font-size:0.7rem;">NEW</span> multi-company record rules
 &#9492;&#9472; <span class="dir">fonts/</span>
    &#9492;&#9472; <span class="old">cambria*.ttf, calibri*.ttf</span>
 </div>
 
 <!-- ════════════════ PYTHON DATACLASSES ════════════════ -->
-<h2>&#128421; &#1050;&#1083;&#1102;&#1095;&#1077;&#1074;&#1099;&#1077; dataclasses (lib/theme.py)</h2>
+<h2>&#128421; Ключевые dataclasses (lib/theme.py)</h2>
 <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));">
   <div class="card">
     <div class="card-title" style="color: var(--cyan);">CompanyTheme</div>
@@ -576,9 +617,9 @@
       <tr><td class="mono">primary_color</td><td style="color:#8B0000;">"#8B0000"</td></tr>
       <tr><td class="mono">accent_color</td><td style="color:#D4AF37;">"#D4AF37"</td></tr>
       <tr><td class="mono">watermark_text</td><td>"CONFIDENTIAL"</td></tr>
-      <tr><td class="mono">signatory_name/title</td><td>&#1055;&#1086;&#1076;&#1087;&#1080;&#1089;&#1072;&#1085;&#1090;</td></tr>
+      <tr><td class="mono">signatory_name/title</td><td>Подписант</td></tr>
       <tr><td class="mono">local_lang</td><td>None / "pl" / "uk"</td></tr>
-      <tr><td class="mono">bank_swift/account/name</td><td>&#1041;&#1072;&#1085;&#1082; &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1080;</td></tr>
+      <tr><td class="mono">bank_swift/account/name</td><td>Банк компании</td></tr>
     </table>
   </div>
   <div class="card">
@@ -586,7 +627,7 @@
     <table style="margin:0;">
       <tr><td class="mono">sequence</td><td>10, 20, 30...</td></tr>
       <tr><td class="mono">title_en</td><td>"1. DEFINITIONS"</td></tr>
-      <tr><td class="mono">title_local</td><td>"1. &#1042;&#1048;&#1047;&#1053;&#1040;&#1063;&#1045;&#1053;&#1053;&#1071;"</td></tr>
+      <tr><td class="mono">title_local</td><td>"1. ВИЗНАЧЕННЯ"</td></tr>
       <tr><td class="mono">content_en</td><td>[{type, text}, ...]</td></tr>
       <tr><td class="mono">content_local</td><td>[{type, text}, ...]</td></tr>
       <tr><td class="mono">style</td><td>"normal" | "callout"</td></tr>
@@ -608,29 +649,29 @@
 </div>
 
 <!-- ════════════════ SEED DATA ════════════════ -->
-<h2>&#127793; Seed Data (&#1087;&#1088;&#1080; &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1082;&#1077; &#1084;&#1086;&#1076;&#1091;&#1083;&#1103;)</h2>
+<h2>&#127793; Seed Data (при установке модуля)</h2>
 <div class="cards">
   <div class="card" style="border-left: 3px solid var(--red);">
     <div class="card-title"><span class="icon">&#128220;</span> NDA &mdash; Woodenshark LLC</div>
-    <p><strong>12 &#1089;&#1077;&#1082;&#1094;&#1080;&#1081;:</strong></p>
+    <p><strong>12 секций:</strong></p>
     <ul>
-      <li>1. Definitions (7 &#1087;&#1091;&#1085;&#1082;&#1090;&#1086;&#1074;)</li>
-      <li>2. Confidential Information (6 &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1081;)</li>
-      <li>3. Obligations (7 &#1087;&#1091;&#1085;&#1082;&#1090;&#1086;&#1074;)</li>
-      <li>4. Exclusions (5 &#1080;&#1089;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1081;)</li>
+      <li>1. Definitions (7 пунктов)</li>
+      <li>2. Confidential Information (6 категорий)</li>
+      <li>3. Obligations (7 пунктов)</li>
+      <li>4. Exclusions (5 исключений)</li>
       <li>5. Term &amp; Termination</li>
       <li>6. Return of Materials</li>
       <li>7. Remedies (+ callout)</li>
       <li>8. Non-Solicitation</li>
       <li>9. Intellectual Property</li>
       <li>10. Governing Law (Delaware)</li>
-      <li>11. General Provisions (8 &#1087;&#1091;&#1085;&#1082;&#1090;&#1086;&#1074;)</li>
+      <li>11. General Provisions (8 пунктов)</li>
       <li>12. Entire Agreement</li>
     </ul>
   </div>
   <div class="card" style="border-left: 3px solid var(--accent);">
     <div class="card-title"><span class="icon">&#128220;</span> Consulting Agreement &mdash; Woodenshark LLC</div>
-    <p><strong>23 &#1089;&#1077;&#1082;&#1094;&#1080;&#1080;:</strong></p>
+    <p><strong>23 секции:</strong></p>
     <ul>
       <li>1. Background</li>
       <li>2. Services Provided <span class="tag tag-cyan">service_callout</span></li>
@@ -650,26 +691,26 @@
 </div>
 
 <!-- ════════════════ PHASES ════════════════ -->
-<h2>&#128197; &#1060;&#1072;&#1079;&#1099; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080;</h2>
+<h2>&#128197; Фазы реализации</h2>
 <div class="timeline">
   <div class="phase done">
-    <div class="phase-title">Phase 1: CompanyTheme + &#1087;&#1072;&#1088;&#1072;&#1084;&#1077;&#1090;&#1088;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; PDF <span class="tag tag-green">DONE</span></div>
-    <div class="phase-desc">Dataclasses, &#1088;&#1077;&#1092;&#1072;&#1082;&#1090;&#1086;&#1088;&#1080;&#1085;&#1075; generate_nda/generate_contract, BilingualRenderer</div>
+    <div class="phase-title">Phase 1: CompanyTheme + параметризация PDF <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">Dataclasses, рефакторинг generate_nda/generate_contract, BilingualRenderer</div>
     <div class="phase-files">lib/theme.py, lib/pdf_generators.py</div>
   </div>
   <div class="phase done">
-    <div class="phase-title">Phase 2: Odoo-&#1084;&#1086;&#1076;&#1077;&#1083;&#1080; &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;&#1086;&#1074; <span class="tag tag-green">DONE</span></div>
-    <div class="phase-desc">3 &#1084;&#1086;&#1076;&#1077;&#1083;&#1080; + views + security + &#1084;&#1077;&#1085;&#1102;</div>
+    <div class="phase-title">Phase 2: Odoo-модели шаблонов <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">3 модели + views + security + меню</div>
     <div class="phase-files">models/contract_template*.py, models/contract_document.py</div>
   </div>
   <div class="phase done">
     <div class="phase-title">Phase 3: Seed Data <span class="tag tag-green">DONE</span></div>
-    <div class="phase-desc">12 NDA + 23 Contract &#1089;&#1077;&#1082;&#1094;&#1080;&#1081; &#1074; XML</div>
+    <div class="phase-desc">12 NDA + 23 Contract секций в XML</div>
     <div class="phase-files">data/nda_template_ws.xml, data/contract_template_ws.xml</div>
   </div>
   <div class="phase done">
-    <div class="phase-title">Phase 4: Wizard &#1075;&#1077;&#1085;&#1077;&#1088;&#1072;&#1094;&#1080;&#1080; <span class="tag tag-green">DONE</span></div>
-    <div class="phase-desc">Template selection, legacy fallback, &#1072;&#1074;&#1090;&#1086;-document</div>
+    <div class="phase-title">Phase 4: Wizard генерации <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">Template selection, legacy fallback, авто-document</div>
     <div class="phase-files">wizards/generate_wizard.py, views/generate_wizard_views.xml</div>
   </div>
   <div class="phase done">
@@ -678,36 +719,111 @@
     <div class="phase-files">models/contract_document.py, data/cron.xml</div>
   </div>
   <div class="phase done">
-    <div class="phase-title">Phase 6: &#1060;&#1080;&#1085;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1103; <span class="tag tag-green">DONE</span></div>
-    <div class="phase-desc">__manifest__ v2.0.0, 55/55 &#1090;&#1077;&#1089;&#1090;&#1086;&#1074;, git push</div>
+    <div class="phase-title">Phase 6: Финализация <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">__manifest__ v2.0.0, 55/55 тестов, git push</div>
     <div class="phase-files">__manifest__.py</div>
+  </div>
+  <div class="phase done">
+    <div class="phase-title">Phase 7: UX + Odoo.sh Deploy <span class="tag tag-green">DONE</span></div>
+    <div class="phase-desc">Kanban view, chatter (mail tracking), bulk actions (Generate PDF + Archive), multi-company record rules, tree&rarr;list fix (Odoo 18), cron numbercall fix, deployed to test50</div>
+    <div class="phase-files">views/server_actions.xml, security/ir_rules.xml, views/contract_document_views.xml</div>
   </div>
 </div>
 
-<!-- ════════════════ NEXT STEPS ════════════════ -->
-<h2>&#127937; Next Steps</h2>
-<div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-  <div class="card" style="border-left: 3px solid var(--orange);">
-    <div class="card-title"><span class="icon">&#128274;</span> Admin rights</div>
-    <p>&#1055;&#1086;&#1083;&#1091;&#1095;&#1080;&#1090;&#1100; admin &#1085;&#1072; Odoo.sh &rarr; &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1080;&#1090;&#1100; &#1084;&#1086;&#1076;&#1091;&#1083;&#1100;</p>
+<!-- ════════════════ USER GUIDE ════════════════ -->
+<h2>&#128214; Руководство пользователя</h2>
+
+<div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+
+  <div class="card" style="border-top: 3px solid var(--accent);">
+    <div class="card-title"><span class="step-number">1</span> Создание шаблона</div>
+    <ul>
+      <li><strong>WS Contracts &rarr; Configuration &rarr; Contract Templates</strong></li>
+      <li>Заполнить: компания, тип документа, язык</li>
+      <li>Настроить цвета (color picker), подписанта, адрес</li>
+      <li>Добавить секции во вкладке <strong>Sections</strong></li>
+    </ul>
   </div>
-  <div class="card" style="border-left: 3px solid var(--purple);">
-    <div class="card-title"><span class="icon">&#127970;</span> &#1064;&#1072;&#1073;&#1083;&#1086;&#1085;&#1099; &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1081;</div>
-    <p>&#1057;&#1086;&#1079;&#1076;&#1072;&#1090;&#1100; &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;&#1099; &#1076;&#1083;&#1103; &#1074;&#1089;&#1077;&#1093; 9 &#1082;&#1086;&#1084;&#1087;&#1072;&#1085;&#1080;&#1081; &#1095;&#1077;&#1088;&#1077;&#1079; UI</p>
+
+  <div class="card" style="border-top: 3px solid var(--orange);">
+    <div class="card-title"><span class="step-number">2</span> Заполнение данных сотрудника</div>
+    <ul>
+      <li><strong>Employees &rarr; выбрать сотрудника &rarr; вкладка "Contract Details"</strong></li>
+      <li>4 группы: <span class="tag tag-blue">Personal</span> <span class="tag tag-purple">Passport</span> <span class="tag tag-cyan">Bank</span> <span class="tag tag-orange">Agreement</span></li>
+      <li>Обязательные для NDA: ФИО, дата рождения, паспорт</li>
+      <li>Обязательные для Contract: + IBAN, rate, service description</li>
+    </ul>
   </div>
-  <div class="card" style="border-left: 3px solid var(--cyan);">
-    <div class="card-title"><span class="icon">&#127760;</span> &#1055;&#1077;&#1088;&#1077;&#1074;&#1086;&#1076;&#1099;</div>
-    <p>&#1044;&#1086;&#1073;&#1072;&#1074;&#1080;&#1090;&#1100; PL/UK &#1090;&#1077;&#1082;&#1089;&#1090;&#1099; &#1074; &#1089;&#1077;&#1082;&#1094;&#1080;&#1080; &#1096;&#1072;&#1073;&#1083;&#1086;&#1085;&#1086;&#1074;</p>
+
+  <div class="card" style="border-top: 3px solid var(--green);">
+    <div class="card-title"><span class="step-number">3</span> Генерация документа</div>
+    <ul>
+      <li>На карточке сотрудника: кнопка <strong>"Generate Documents"</strong></li>
+      <li>Или: <strong>WS Contracts &rarr; Documents &rarr; New</strong></li>
+      <li>Выбрать сотрудника + шаблон &rarr; <strong>Generate PDF</strong></li>
+      <li>Bulk: выбрать несколько draft документов &rarr; Action &rarr; <strong>Generate PDF</strong></li>
+    </ul>
   </div>
-  <div class="card" style="border-left: 3px solid var(--green);">
-    <div class="card-title"><span class="icon">&#128640;</span> E2E &#1090;&#1077;&#1089;&#1090;</div>
-    <p>&#1043;&#1077;&#1085;&#1077;&#1088;&#1072;&#1094;&#1080;&#1103; + &#1087;&#1086;&#1076;&#1087;&#1080;&#1089;&#1100; &#1085;&#1072; test50 &#1080;&#1085;&#1089;&#1090;&#1072;&#1085;&#1089;&#1077;</p>
+
+  <div class="card" style="border-top: 3px solid var(--purple);">
+    <div class="card-title"><span class="step-number">4</span> Подпись</div>
+    <ul>
+      <li>На документе: <strong>"Send for Signature"</strong> (требует Odoo Sign)</li>
+      <li>Создаёт sign.template + sign.request</li>
+      <li>Cron проверяет статус каждый час</li>
+      <li>Или: <strong>"Mark as Signed"</strong> для ручной подписи</li>
+    </ul>
   </div>
+
+  <div class="card" style="border-top: 3px solid var(--text2);">
+    <div class="card-title"><span class="step-number">5</span> Архивация</div>
+    <ul>
+      <li><strong>"Archive"</strong> на документе или bulk Archive</li>
+      <li>Фильтр <strong>"Active"</strong> по умолчанию скрывает архивные</li>
+    </ul>
+  </div>
+
+  <div class="card" style="border-top: 3px solid var(--cyan);">
+    <div class="card-title"><span class="icon">&#128203;</span> Kanban Board</div>
+    <ul>
+      <li>Документы группируются по статусу</li>
+      <li>Progressbar показывает распределение</li>
+      <li><span class="tag tag-red">Красный</span> = Generated (нужно подписать)</li>
+    </ul>
+  </div>
+
+  <div class="card" style="border-top: 3px solid var(--pink);">
+    <div class="card-title"><span class="icon">&#128100;</span> Smart Buttons на сотруднике</div>
+    <ul>
+      <li><strong>"Documents"</strong> &mdash; все документы сотрудника</li>
+      <li><strong>"Pending Sign"</strong> &mdash; ожидают подписи (появляется только если count &gt; 0)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ════════════════ DEPLOYMENT INFO ════════════════ -->
+<h2>&#128640; Deployment Info</h2>
+<div class="deploy-grid">
+  <span class="deploy-label">Test instance:</span>
+  <span class="deploy-value"><code>omds-sh-test50-29526801.dev.odoo.com</code></span>
+
+  <span class="deploy-label">Module version:</span>
+  <span class="deploy-value"><code>18.0.2.0.0</code></span>
+
+  <span class="deploy-label">Odoo 18 fixes:</span>
+  <span class="deploy-value"><code>tree</code> &rarr; <code>list</code> в views, удалён <code>numbercall</code> из cron</span>
+
+  <span class="deploy-label">Deploy method:</span>
+  <span class="deploy-value"><code>git clone</code> &rarr; <code>cp</code> to addons &rarr; XML-RPC install</span>
+
+  <span class="deploy-label">Admin users:</span>
+  <span class="deploy-value"><code>alex@omdsystems.com</code>, <code>ana@omdsystems.com</code></span>
 </div>
 
 <hr style="border: none; border-top: 1px solid var(--border); margin: 3rem 0 1rem;">
 <p style="color: var(--text2); font-size: 0.8rem; text-align: center;">
-  ws-contracts v2 &mdash; commit <code>524861b</code> &mdash; &#1089;&#1075;&#1077;&#1085;&#1077;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086; 2026-03-19
+  ws-contracts v2 &mdash; Odoo 18 Module &mdash; 2026-03-19
 </p>
 
 </body>
