@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!-- ═══════════════════════════════════════════════════════════
              Woodenshark LLC — NDA Template
@@ -12,6 +12,8 @@
             <field name="primary_color">#8B0000</field>
             <field name="accent_color">#D4AF37</field>
             <field name="watermark_text">WOODENSHARK LLC CONFIDENTIAL</field>
+            <field name="signatory_name">Dmytro Goriunov</field>
+            <field name="signatory_title">CEO</field>
             <field name="signatory_email">mitgor@woodenshark.com</field>
             <field name="company_address">3411 Silverside Road, Suite 104
 Wilmington, DE 19810, USA</field>

@@ -15,7 +15,7 @@
     "author": "Woodenshark LLC",
     "website": "https://woodenshark.com",
     "license": "LGPL-3",
-    "depends": ["hr"],
+    "depends": ["hr", "mail"],
     "data": [
         "security/ir.model.access.csv",
         "views/contract_template_views.xml",
@@ -30,6 +30,6 @@
         "python": ["fpdf2"],
     },
     "installable": True,
-    "application": True,
+    "application": False,
     "auto_install": False,
 }

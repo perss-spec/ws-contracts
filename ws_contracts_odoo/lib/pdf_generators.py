@@ -232,7 +232,8 @@ class WsPDF(FPDF):
         self.set_font(HEAD_FONT, "", 7)
         self.set_text_color(107, 107, 107)
         self.set_xy(0, 284)
-        self.cell(210, 4, f"{self._doc_type}  |  STRICTLY CONFIDENTIAL  |  Page {{nb}}", align="C")
+        clf = getattr(self, '_classification_label', 'STRICTLY CONFIDENTIAL')
+        self.cell(210, 4, f"{self._doc_type}  |  {clf}  |  Page {{nb}}", align="C")
         r, g, b = hex_to_rgb(self._header_color)
         self.set_fill_color(r, g, b)
         self.rect(0, 289, 210, 8, style="F")
@@ -439,21 +440,35 @@ class BilingualRenderer:
                 self.render_paragraph(item, local_text)
 
     def _render_callout(self, text_en: str, text_local: Optional[str] = None):
-        """Render a callout box (tinted bg + left border)."""
-        _page_break(self.pdf, 20)
+        """Render a callout box (tinted bg + left border) with dynamic height."""
+        _page_break(self.pdf, 30)
         tint = self.palette.get("RED_TINT", self.palette.get("CYAN_TINT", "#F5F5F5"))
         accent = self.palette.get("RED_ACCENT", self.palette.get("CYAN", "#999999"))
 
-        y = self.pdf.get_y()
+        y_start = self.pdf.get_y()
+
+        # Measure EN text height
+        self.pdf.set_font(BODY_FONT, "B", 11)
+        en_lines = self.pdf.multi_cell(CW - 8, 5, text_en, align="J", dry_run=True, output="LINES")
+        h_en = len(en_lines) * 5
+
+        # Measure local text height
+        h_local = 0
+        if self.has_local and text_local:
+            self.pdf.set_font(BODY_FONT, "BI", 9.5)
+            loc_lines = self.pdf.multi_cell(CW - 8, 4.5, text_local, align="J", dry_run=True, output="LINES")
+            h_local = len(loc_lines) * 4.5 + 2  # +2 gap
+
+        h = h_en + h_local + 8  # 3 top padding + 3 bottom padding + 2 gap
+
         set_color(self.pdf, tint, "fill")
         set_color(self.pdf, accent, "draw")
         self.pdf.set_line_width(0.8)
-        h = 20 if not (self.has_local and text_local) else 30
-        self.pdf.rect(ML, y, CW, h, style="DF")
+        self.pdf.rect(ML, y_start, CW, h, style="DF")
         set_color(self.pdf, accent, "fill")
-        self.pdf.rect(ML, y, 1.2, h, style="F")
+        self.pdf.rect(ML, y_start, 1.2, h, style="F")
 
-        self.pdf.set_xy(ML + 4, y + 3)
+        self.pdf.set_xy(ML + 4, y_start + 3)
         self.pdf.set_font(BODY_FONT, "B", 11)
         set_color(self.pdf, self.palette.get("TEXT_PRIMARY", "#1A1A1A"))
         self.pdf.multi_cell(CW - 8, 5, text_en, align="J")
@@ -464,7 +479,7 @@ class BilingualRenderer:
             set_color(self.pdf, self.LOCAL_BODY_COLOR)
             self.pdf.multi_cell(CW - 8, 4.5, text_local, align="J")
 
-        self.pdf.set_y(y + h + 2)
+        self.pdf.set_y(y_start + h + 2)
 
 
 # ══════════════════════════════════════════════════
@@ -493,6 +508,7 @@ def generate_nda(emp: EmployeeData, fonts_dir: Path,
     pdf._accent_color = C.get("ACCENT_COLOR", C.get("RED_ACCENT", "#C62828"))
     pdf._header_text_color = C.get("HEADER_TEXT_COLOR", C.get("GOLD_LIGHT", "#D4A017"))
     pdf._header_label = tmpl.header_label
+    pdf._classification_label = tmpl.classification_label
     pdf._company_color = C.get("COMPANY_COLOR", C.get("CRIMSON", "#8B0000"))
 
     ed = fmt_date(emp.effective_date or emp.agreement_date or date.today())
@@ -772,6 +788,7 @@ def generate_contract(emp: EmployeeData, fonts_dir: Path,
     pdf._accent_color = C.get("ACCENT_COLOR", C.get("CYAN", "#00BCD4"))
     pdf._header_text_color = C.get("HEADER_TEXT_COLOR", "#FFFFFF")
     pdf._header_label = tmpl.header_label
+    pdf._classification_label = tmpl.classification_label
     pdf._company_color = C.get("COMPANY_COLOR", C.get("DARK", "#0D1117"))
 
     ad = fmt_date(emp.agreement_date or date.today())

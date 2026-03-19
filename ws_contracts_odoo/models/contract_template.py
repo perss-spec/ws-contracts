@@ -14,6 +14,7 @@ class ContractTemplate(models.Model):
     company_id = fields.Many2one(
         "res.company", string="Company", required=True,
         default=lambda self: self.env.company,
+        ondelete="restrict",
     )
     doc_type = fields.Selection(
         [

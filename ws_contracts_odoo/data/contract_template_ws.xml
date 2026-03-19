@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!-- ============================================================ -->
         <!-- Template: Woodenshark LLC Consulting Agreement                -->
@@ -12,6 +12,8 @@
             <field name="primary_color">#0A0E17</field>
             <field name="accent_color">#00BCD4</field>
             <field name="watermark_text">WOODENSHARK LLC CONFIDENTIAL</field>
+            <field name="signatory_name">Dmytro Goriunov</field>
+            <field name="signatory_title">CEO</field>
             <field name="signatory_email">mitgor@woodenshark.com</field>
             <field name="company_address">3411 Silverside Road, Suite 104
 Wilmington, DE 19810, USA</field>

@@ -39,7 +39,7 @@
                             string="Mark as Signed"
                             invisible="state != 'sent_for_sign'"
                             confirm="Mark this document as signed?"/>
-                    <button name="action_archive" type="object"
+                    <button name="action_move_to_archive" type="object"
                             string="Archive"
                             invisible="state in ('archived', 'draft')"/>
                     <field name="state" widget="statusbar"
@@ -58,7 +58,7 @@
                             <field name="generated_date"/>
                             <field name="signed_date"/>
                             <field name="pdf_attachment_id"/>
-                            <field name="sign_request_id" invisible="not sign_request_id"/>
+                            <field name="sign_request_id" invisible="sign_request_id == 0"/>
                         </group>
                     </group>
                 </sheet>
@@ -76,7 +76,9 @@
                 <field name="template_id"/>
                 <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                 <filter name="generated" string="Generated" domain="[('state', '=', 'generated')]"/>
+                <filter name="sent_for_sign" string="Sent for Signature" domain="[('state', '=', 'sent_for_sign')]"/>
                 <filter name="signed" string="Signed" domain="[('state', '=', 'signed')]"/>
+                <filter name="archived" string="Archived" domain="[('state', '=', 'archived')]"/>
                 <group expand="0" string="Group By">
                     <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
                     <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>

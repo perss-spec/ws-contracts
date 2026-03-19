@@ -49,7 +49,9 @@ class GenerateWizard(models.TransientModel):
         emp_data = EmployeeData(**data)
         vals = {"state": "done"}
 
-        if self.use_template and self.template_id:
+        if self.use_template:
+            if not self.template_id:
+                raise UserError("Please select a template.")
             self._generate_from_template(emp_data, vals)
         else:
             self._generate_legacy(emp_data, vals)
