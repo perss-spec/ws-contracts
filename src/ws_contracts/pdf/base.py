@@ -93,7 +93,7 @@ class WsPDF(FPDF):
         text = self._watermark_text
         with self.rotation(45, self.w / 2, self.h / 2):
             self.set_font(FONTS["HEADING"], "B", 42)
-            self.set_text_color(230, 230, 230)
+            self.set_text_color(245, 245, 245)
             tw = self.get_string_width(text)
             self.text(self.w / 2 - tw / 2, self.h / 2, text)
 
