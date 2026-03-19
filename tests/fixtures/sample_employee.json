@@ -1,0 +1,18 @@
+{
+  "id": 42,
+  "full_name_lat": "Oleksandr Petrenko",
+  "date_of_birth": "1990-05-15",
+  "passport_number": "FE123456",
+  "passport_issued": "2020-01-10",
+  "passport_expires": "2030-01-10",
+  "address": "Kyiv, Ukraine, 01001",
+  "work_email": "o.petrenko@example.com",
+  "phone": "+380501234567",
+  "iban": "UA213223130000026007233566001",
+  "swift": "UNJSUAUKXXX",
+  "receiver_name": "Oleksandr Petrenko",
+  "rate_usd": 3000,
+  "service_description": "UAV Systems Development Services",
+  "agreement_date": "2025-01-15",
+  "effective_date": "2025-02-01"
+}

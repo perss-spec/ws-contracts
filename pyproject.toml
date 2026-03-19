@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ws-contracts"
+version = "0.1.0"
+description = "NDA & Consulting Agreement PDF generator with Odoo 18 integration"
+requires-python = ">=3.10"
+dependencies = [
+    "fpdf2>=2.8.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "click>=8.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=9.0", "pytest-cov", "pypdf>=4.0"]
+
+[project.scripts]
+ws-contracts = "ws_contracts.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ws_contracts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
