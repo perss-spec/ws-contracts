@@ -1,11 +1,8 @@
 import base64
-import logging
 from pathlib import Path
 
-from odoo import models, fields, api
+from odoo import models, fields
 from odoo.exceptions import UserError
-
-_logger = logging.getLogger(__name__)
 
 # Fonts directory relative to this file
 FONTS_DIR = Path(__file__).resolve().parent.parent / "fonts"

@@ -6,7 +6,6 @@ No dependency on ws_contracts — everything self-contained.
 
 from __future__ import annotations
 
-import re
 import uuid
 from datetime import date, datetime
 from io import BytesIO
@@ -82,9 +81,15 @@ class EmployeeData:
 #  Color helpers
 # ══════════════════════════════════════════════════
 
+_rgb_cache: dict[str, tuple] = {}
+
 def hex_to_rgb(h: str) -> tuple:
-    h = h.lstrip("#")
-    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    if h in _rgb_cache:
+        return _rgb_cache[h]
+    raw = h.lstrip("#")
+    result = int(raw[0:2], 16), int(raw[2:4], 16), int(raw[4:6], 16)
+    _rgb_cache[h] = result
+    return result
 
 
 NDA_C = {
@@ -260,6 +265,8 @@ def _make_pdf(employee_id, fonts_dir: Path) -> WsPDF:
             p = fonts_dir / files[i]
             if p.exists():
                 pdf.add_font(fam, style, str(p))
+            elif style in ("", "B"):
+                raise FileNotFoundError(f"Required font missing: {p}")
     return pdf
 
 
@@ -313,7 +320,10 @@ def _sub(pdf, label, text, accent):
 # (imported from nda_sections.py / contract_sections.py of ws_contracts)
 
 def generate_nda(emp: EmployeeData, fonts_dir: Path) -> tuple:
-    """Returns (pdf_bytes, filename)."""
+    """Returns (pdf_bytes, filename). Raises ValueError if required fields missing."""
+    missing = emp.validate_for_nda()
+    if missing:
+        raise ValueError(f"NDA: missing fields — {', '.join(missing)}")
     C = NDA_C
     pdf = _make_pdf(emp.id, fonts_dir)
     pdf._doc_type = "Non-Disclosure Agreement"
@@ -557,7 +567,10 @@ def _nda_signature(pdf, emp, C):
 # ══════════════════════════════════════════════════
 
 def generate_contract(emp: EmployeeData, fonts_dir: Path) -> tuple:
-    """Returns (pdf_bytes, filename)."""
+    """Returns (pdf_bytes, filename). Raises ValueError if required fields missing."""
+    missing = emp.validate_for_contract()
+    if missing:
+        raise ValueError(f"Contract: missing fields — {', '.join(missing)}")
     C = CONTRACT_C
     pdf = _make_pdf(emp.id, fonts_dir)
     pdf._doc_type = "Consulting Agreement"
